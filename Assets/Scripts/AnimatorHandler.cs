@@ -20,7 +20,7 @@ namespace MBF
             horizontal = Animator.StringToHash("Horizontal");
         }
 
-        public void UpdateAnimatorValues(float vertMovement, float horiMovement)
+        public void UpdateAnimatorValues(float vertMovement, float horiMovement, bool isSprinting)
         {
             #region Vertical
             float v = 0;
@@ -72,8 +72,21 @@ namespace MBF
             }
             #endregion
 
+            //check for sprinting state and update animator values
+            if(isSprinting && vertMovement > 0)
+            {
+                v = 2;
+                h = horiMovement;
+            }
+
             animator.SetFloat(vertical, v, 0.1f, Time.deltaTime);
             animator.SetFloat(horizontal, h, 0.1f, Time.deltaTime);
+        }
+
+        //function to trigger different animations
+        public void PlayTargetAnimation(string targetAnim)
+        {
+            animator.CrossFade(targetAnim, 0.2f);
         }
 
         #region Rotation Functions
