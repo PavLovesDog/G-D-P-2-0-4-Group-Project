@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Player Controls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Player Controls.inputactions'
 
 using System;
 using System.Collections;
@@ -107,7 +107,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""id"": ""82339620-efcf-4ce2-be30-7eea39c0249a"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone"",
                     ""groups"": """",
                     ""action"": ""Camera"",
                     ""isComposite"": false,

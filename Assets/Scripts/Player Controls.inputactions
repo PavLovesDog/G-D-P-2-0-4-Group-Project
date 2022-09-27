@@ -94,7 +94,7 @@
                     "id": "82339620-efcf-4ce2-be30-7eea39c0249a",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone",
                     "groups": "",
                     "action": "Camera",
                     "isComposite": false,

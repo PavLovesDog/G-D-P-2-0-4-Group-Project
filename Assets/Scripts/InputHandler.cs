@@ -20,9 +20,28 @@ namespace MBF
         public float mouseY;
 
         PlayerControls playerControls; // reference to input system
+        CameraHandler cameraHandler;
 
         Vector2 movementInput;
         Vector2 cameraInput;
+
+        private void Start()
+        {
+            cameraHandler = FindObjectOfType<CameraHandler>(); // acquire camera
+        }
+
+        private void FixedUpdate()
+        {
+            // track smoothing time between frames
+            float delta = Time.deltaTime;
+
+            // Handle camera operations
+            if (cameraHandler != null)
+            {
+                cameraHandler.FollowTarget(delta);
+                cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
+            }
+        }
 
         public void OnEnable()
         {
