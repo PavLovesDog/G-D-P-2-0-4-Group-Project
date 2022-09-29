@@ -27,7 +27,7 @@ namespace MBF
         public bool sprintFlag;
         public bool sneakFlag;
 
-        PlayerControls playerControls; // reference to input system
+        public PlayerControls playerControls; // reference to input system
         CameraHandler cameraHandler;
 
         Vector2 movementInput;
