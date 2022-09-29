@@ -14,7 +14,7 @@ public class RockVelocity : MonoBehaviour
     //
     // destroy variables
     private float timer;
-    private float totalLifeTime = 5f;
+    public float totalLifeTime = 30f;
     //
     //private void Awake()
     //{

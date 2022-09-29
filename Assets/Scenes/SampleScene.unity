@@ -895,6 +895,7 @@ MonoBehaviour:
   arc: 0
   arcForce: 20
   maxAmmo: 15
+  currentAmmo: 0
   reloadTime: 0.5
   left_click_input: 0
   canThrow: 0

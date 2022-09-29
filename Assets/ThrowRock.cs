@@ -16,7 +16,7 @@ namespace MBF
         public float arcForce;
 
         public int maxAmmo = 15;
-        private int currentAmmo;
+        public int currentAmmo;
         public float reloadTime = 1f;
 
         public bool left_click_input;
@@ -54,7 +54,6 @@ namespace MBF
                 canThrow = false;
                 if (currentAmmo > 0)
                 {
-                    // minus ammo
                     currentAmmo--;
 
                     //spawn rock
@@ -73,6 +72,21 @@ namespace MBF
 
             yield return new WaitForSeconds(reloadTime); // pause before it can happen agian
             canThrow = true;
+        }
+
+        //upon the player (because thats the game object this script is attached to) triggering the 'other' colllider
+        private void OnTriggerEnter(Collider other)
+        {
+            if(currentAmmo < maxAmmo)
+            {
+                currentAmmo++;
+                Debug.Log("You picked up a " + other.gameObject.name);
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                Debug.Log("No room for more " + other.gameObject.name + "s...");
+            }
         }
     }
 }
