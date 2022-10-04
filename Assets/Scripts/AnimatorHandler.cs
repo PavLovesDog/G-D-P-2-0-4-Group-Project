@@ -8,6 +8,8 @@ namespace MBF
     {
         //refernece the animator
         public Animator animator;
+        PlayerMovement playerMovement;
+        InputHandler inputHandler;
         int vertical;
         int horizontal;
 
@@ -18,6 +20,8 @@ namespace MBF
             animator = GetComponent<Animator>();
             vertical = Animator.StringToHash("Vertical");
             horizontal = Animator.StringToHash("Horizontal");
+            playerMovement = GetComponentInChildren<PlayerMovement>(); // NO USE NO MORE
+            inputHandler = GetComponent<InputHandler>();
         }
 
         public void UpdateAnimatorValues(float vertMovement, float horiMovement, bool isSprinting)
@@ -79,6 +83,7 @@ namespace MBF
                 h = horiMovement;
             }
 
+            //update parameters within animator
             animator.SetFloat(vertical, v, 0.1f, Time.deltaTime);
             animator.SetFloat(horizontal, h, 0.1f, Time.deltaTime);
         }

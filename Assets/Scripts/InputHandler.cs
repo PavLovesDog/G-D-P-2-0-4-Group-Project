@@ -21,11 +21,17 @@ namespace MBF
 
         //button inputs
         public bool b_input; // Sprinting input
+        public bool y_input; // jump button
         public bool left_thumb_click_input;
 
         //action bool flags
         public bool sprintFlag;
         public bool sneakFlag;
+        public bool jumpFlag;
+
+        //state bools
+        public bool isGrounded = true;
+        public bool isInAir = false;
 
         public PlayerControls playerControls; // reference to input system
         CameraHandler cameraHandler;
@@ -55,8 +61,8 @@ namespace MBF
         private void LateUpdate()
         {
             left_thumb_click_input = false;
-
             sprintFlag = false;
+            jumpFlag = false;
         }
 
         public void OnEnable()
@@ -82,12 +88,13 @@ namespace MBF
         //Function which handles input specific calls, and unifies them
         public void TickInput(float delta)
         {
-            MoveInput(delta);
-            HandleSprintInput(delta);
-            HandleSneakInput(delta);
+            MoveInput();
+            HandleSprintInput();
+            HandleSneakInput();
+            HandleJumpInput();
         }
 
-        private void MoveInput(float delta)
+        private void MoveInput()
         {
             horizontal = movementInput.x; // assign x and y movements to corresponding inputs
             vertical = movementInput.y;
@@ -96,7 +103,7 @@ namespace MBF
             mouseY = cameraInput.y;
         }
 
-        private void HandleSprintInput(float delta)
+        private void HandleSprintInput()
         {
             //map the pressing of the button directly to bool
             b_input = playerControls.PlayerActions.Sprint.phase == UnityEngine.InputSystem.InputActionPhase.Started;
@@ -112,7 +119,7 @@ namespace MBF
             }
         }
 
-        private void HandleSneakInput(float delta)
+        private void HandleSneakInput()
         {
             // map button with input handler
             left_thumb_click_input = playerControls.PlayerActions.Sneak.phase == UnityEngine.InputSystem.InputActionPhase.Started;
@@ -125,6 +132,18 @@ namespace MBF
             {
                 sneakFlag = false;
             }
+        }
+
+        private void HandleJumpInput()
+        {
+            //map button
+            y_input = playerControls.PlayerActions.Jump.phase == UnityEngine.InputSystem.InputActionPhase.Started;
+            //set bool
+            if(y_input)
+            {
+                jumpFlag = true;
+            }
+
         }
     }
 }

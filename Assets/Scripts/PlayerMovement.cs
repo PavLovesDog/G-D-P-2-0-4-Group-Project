@@ -29,6 +29,41 @@ namespace MBF
         float sprintSpeed = 8;
         [SerializeField]
         float walkingSpeed = 2.5f;
+        [SerializeField]
+        float jumpForce = 10;
+        public float jumpTimer = 0;
+        public bool canJump = true;
+
+        //This list BETTER suited for NPC...
+        //[Header("Raycast variables")]
+        //[SerializeField]
+        //float detectionRadius;
+        //[SerializeField]
+        //float detectionDistance;
+        //[SerializeField]
+        //Vector3 lookDirection = new Vector3();
+        //[SerializeField]
+        //public GameObject currentHitObject;
+        //[SerializeField]
+        //LayerMask layerMask;
+        //private float currentHitDistance;
+
+        //This list BETTER suited for NPC...
+        [Header("Falling & Raycast variables")]
+        [SerializeField]
+        float initialFallSpeed;
+        [SerializeField]
+        float fallVelocity;
+        [SerializeField]
+        float gravityIntensity;
+        [SerializeField]
+        float distanceNeededForFall;
+        [SerializeField]
+        Vector3 rayDirection = new Vector3();
+        [SerializeField]
+        public GameObject currentHitObject;
+        [SerializeField]
+        LayerMask layerMask; // NOt needed now??
 
         void Start()
         {
@@ -48,7 +83,11 @@ namespace MBF
 
             inputHandler.TickInput(delta); // run Tick handle for input listening
             HandleMovement(delta);
-            HandleSneaking(delta);
+            HandleSneaking();
+            HandleFalling(delta);
+            HandleJumping(delta);
+
+            
         }
 
         #region Movement
@@ -128,7 +167,7 @@ namespace MBF
         }
         #endregion
 
-        private void HandleSneaking(float delta)
+        private void HandleSneaking()
         {
             if(inputHandler.sneakFlag && inputHandler.moveAmount > 0.1f)
             {
@@ -139,5 +178,111 @@ namespace MBF
                 animatorHandler.animator.SetBool("isSneaking", false);
             }
         }
+
+        private void HandleFalling(float delta)
+        {
+            // update animator values for animation
+            animatorHandler.animator.SetBool("isInAir", inputHandler.isInAir);
+            animatorHandler.animator.SetBool("isGrounded", inputHandler.isGrounded);
+
+            #region Cast Downwards Ray
+            rayDirection = -Vector3.up; // shoot ray down
+            // draw ray for debugging
+            Debug.DrawRay(transform.position + Vector3.up, rayDirection * distanceNeededForFall, Color.red, 0.1f, false);
+            RaycastHit hit;
+            // cast ray downwards from centre of character to check for collisions
+            if (Physics.Raycast(transform.position + Vector3.up, rayDirection, out hit, distanceNeededForFall))
+            {
+                if (hit.transform.gameObject != null)
+                {
+                    currentHitObject = hit.transform.gameObject;
+                    Debug.Log(hit.transform.gameObject.name);
+
+                    //change air time bools
+                    inputHandler.isGrounded = true;
+                    inputHandler.isInAir = false;
+                }
+
+            }
+            else // no hit
+            {
+                currentHitObject = null;
+
+                //change air time bools
+                inputHandler.isGrounded = false;
+                inputHandler.isInAir = true;
+            }
+            #endregion
+
+            //handle fall velocity
+            if(inputHandler.isInAir)
+            {
+                //calculate fall speed based on time in air and gravity
+                fallVelocity += delta * (gravityIntensity);
+                rigidbody.AddForce((rayDirection * fallVelocity * 1000) + moveDirection); // add falling speed to rigidbody
+                rigidbody.AddForce(moveDirection.normalized * 4f, ForceMode.Impulse); // give a little nudge of the edge in direct heading, to avoid getting stuck on ledge
+
+            }
+            else
+            {
+                fallVelocity = initialFallSpeed;
+            }
+        }
+
+        private void HandleJumping(float delta)
+        {
+            if(inputHandler.jumpFlag)
+            {
+                 // set timer to handle jumps
+                // play animation
+                jumpTimer = 4f;
+                animatorHandler.PlayTargetAnimation("Jump");
+            }
+
+            //whilst the timer is running, compute the jump
+            if (jumpTimer > 0)
+            {
+                jumpTimer -= delta; // count down timer
+
+                if (inputHandler.isGrounded) // if player lands, stop calculating jump
+                    jumpTimer = 0;
+
+                distanceNeededForFall = 0; // trip raycast to be in air
+
+                if (inputHandler.isInAir)
+                {
+                    distanceNeededForFall = 1.1f; // reset ray cast length to detect ground
+                    float jump = 0;
+                    jump += delta * jumpForce * 100;
+                    rigidbody.AddForce(Vector3.up * jump * 1000);
+                }
+            }
+            else
+            {
+                distanceNeededForFall = 1.1f; // reset
+                jumpTimer = 0;
+            }
+        }
+
+        //// may not be needed for single ray shot here...
+        //public void SphereCastRay(Vector3 direction)
+        //{
+        //    RaycastHit hit;
+        //    if (Physics.SphereCast(transform.position, detectionRadius, lookDirection, out hit, detectionDistance, layerMask, QueryTriggerInteraction.UseGlobal))
+        //    {
+        //        if (hit.transform.gameObject != null)
+        //        {
+        //            currentHitObject = hit.transform.gameObject;
+        //            Debug.Log(hit.transform.gameObject.name);
+        //            currentHitDistance = hit.distance;
+        //        }
+        //
+        //    }
+        //    else // no hit
+        //    {
+        //        currentHitDistance = detectionDistance;
+        //        currentHitObject = null;
+        //    }
+        //}
     }
 }
