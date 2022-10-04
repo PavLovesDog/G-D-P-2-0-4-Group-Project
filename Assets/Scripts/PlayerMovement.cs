@@ -9,6 +9,7 @@ namespace MBF
         // references
         Transform cameraObject;
         InputHandler inputHandler;
+        public NPC_Chase[] nPC_Chase;
 
         Vector3 moveDirection;
 
@@ -71,6 +72,10 @@ namespace MBF
             rigidbody = GetComponent<Rigidbody>();
             inputHandler = GetComponent<InputHandler>();
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
+
+            //find all NPC_Chase scripts
+            nPC_Chase = GameObject.FindObjectsOfType<NPC_Chase>();
+
             cameraObject = Camera.main.transform;
             myTransform = transform; // transform of object this script is attached to
             animatorHandler.Initialize();
@@ -172,10 +177,21 @@ namespace MBF
             if(inputHandler.sneakFlag && inputHandler.moveAmount > 0.1f)
             {
                 animatorHandler.animator.SetBool("isSneaking", true);
+                // reduce detection distance of enemies
+                foreach(NPC_Chase script in nPC_Chase)
+                {
+                    // half detection radius of each enemy
+                    script.currentDetectionRadius = script.detectionRadius / 2; //NOTE ONLY WORKS WHEN MOVING....
+                }
             }
             else
             {
                 animatorHandler.animator.SetBool("isSneaking", false);
+                foreach (NPC_Chase script in nPC_Chase)
+                {
+                    // half detection radius of each enemy
+                    script.currentDetectionRadius = script.detectionRadius;
+                }
             }
         }
 
