@@ -1,3 +1,11 @@
+/* 
+ * The structure of the AnimationHandler, PlayerMovement & InputHandler scripts were derived 
+ * from a Youtube tutorial series called "creat DARK SOULS in Unity" by Sebastian Graves. 
+ * Inspiriation for how things are handled and they way these scripts talk to each other lend
+ * to this design but have been modified heavily  by myself, Charles Bird, to suit the needs of this 
+ * project and functionality.
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

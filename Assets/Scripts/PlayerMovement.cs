@@ -1,3 +1,11 @@
+/* 
+ * The structure of the AnimationHandler, PlayerMovement & InputHandler scripts were derived 
+ * from a Youtube tutorial series called "creat DARK SOULS in Unity" by Sebastian Graves. 
+ * Inspiriation for how things are handled and they way these scripts talk to each other lend
+ * to this design but have been modified heavily  by myself, Charles Bird, to suit the needs of this 
+ * project and functionality.
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +17,7 @@ namespace MBF
         // references
         Transform cameraObject;
         InputHandler inputHandler;
+        PlayerStats playerStats;
         public NPC_Chase[] nPC_Chase;
 
         Vector3 moveDirection;
@@ -59,6 +68,7 @@ namespace MBF
         float gravityIntensity;
         [SerializeField]
         float distanceNeededForFall;
+        float fallDetectionRayLength;
         [SerializeField]
         Vector3 rayDirection = new Vector3();
         [SerializeField]
@@ -72,6 +82,7 @@ namespace MBF
             rigidbody = GetComponent<Rigidbody>();
             inputHandler = GetComponent<InputHandler>();
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
+            playerStats = GetComponent<PlayerStats>();
 
             //find all NPC_Chase scripts
             nPC_Chase = GameObject.FindObjectsOfType<NPC_Chase>();
@@ -79,6 +90,8 @@ namespace MBF
             cameraObject = Camera.main.transform;
             myTransform = transform; // transform of object this script is attached to
             animatorHandler.Initialize();
+
+            fallDetectionRayLength = distanceNeededForFall;
         }
 
         public void Update()
@@ -91,8 +104,6 @@ namespace MBF
             HandleSneaking();
             HandleFalling(delta);
             HandleJumping(delta);
-
-            
         }
 
         #region Movement
@@ -120,7 +131,7 @@ namespace MBF
             float speed = moveSpeed;
 
             // check for sprinting
-            if(inputHandler.sprintFlag && inputHandler.moveAmount > 0.5f)
+            if(inputHandler.sprintFlag && inputHandler.moveAmount > 0.5f && !inputHandler.sneakFlag)
             {
                 speed = sprintSpeed;
                 moveDirection *= speed;
@@ -174,17 +185,20 @@ namespace MBF
 
         private void HandleSneaking()
         {
-            if(inputHandler.sneakFlag && inputHandler.moveAmount > 0.1f)
+            if (inputHandler.sneakFlag)
             {
                 animatorHandler.animator.SetBool("isSneaking", true);
+
                 // reduce detection distance of enemies
-                foreach(NPC_Chase script in nPC_Chase)
+                foreach (NPC_Chase script in nPC_Chase)
                 {
                     // half detection radius of each enemy
-                    script.currentDetectionRadius = script.detectionRadius / 2; //NOTE ONLY WORKS WHEN MOVING....
+                    script.currentDetectionRadius = script.detectionRadius / 2;
+                    //NOTE above could be handled in NPC script. if the player isSNeaking, they switch to raycast detections?
+                    //So they just see whats in front of them??
                 }
             }
-            else
+            else // not snekaing
             {
                 animatorHandler.animator.SetBool("isSneaking", false);
                 foreach (NPC_Chase script in nPC_Chase)
@@ -204,10 +218,10 @@ namespace MBF
             #region Cast Downwards Ray
             rayDirection = -Vector3.up; // shoot ray down
             // draw ray for debugging
-            Debug.DrawRay(transform.position + Vector3.up, rayDirection * distanceNeededForFall, Color.red, 0.1f, false);
+            Debug.DrawRay(transform.position + Vector3.up, rayDirection * fallDetectionRayLength, Color.red, 0.1f, false);
             RaycastHit hit;
             // cast ray downwards from centre of character to check for collisions
-            if (Physics.Raycast(transform.position + Vector3.up, rayDirection, out hit, distanceNeededForFall))
+            if (Physics.Raycast(transform.position + Vector3.up, rayDirection, out hit, fallDetectionRayLength))
             {
                 if (hit.transform.gameObject != null)
                 {
@@ -263,11 +277,11 @@ namespace MBF
                 if (inputHandler.isGrounded) // if player lands, stop calculating jump
                     jumpTimer = 0;
 
-                distanceNeededForFall = 0; // trip raycast to be in air
+                fallDetectionRayLength = 0; // trip raycast to be in air
 
                 if (inputHandler.isInAir)
                 {
-                    distanceNeededForFall = 1.1f; // reset ray cast length to detect ground
+                    fallDetectionRayLength = distanceNeededForFall; // reset ray cast length to detect ground
                     float jump = 0;
                     jump += delta * jumpForce * 100;
                     rigidbody.AddForce(Vector3.up * jump * 1000);
@@ -275,11 +289,19 @@ namespace MBF
             }
             else
             {
-                distanceNeededForFall = 1.1f; // reset
+                fallDetectionRayLength = distanceNeededForFall;// reset
                 jumpTimer = 0;
             }
         }
 
+
+        //private void OnCollisionEnter(Collision collision)
+        //{
+        //    if (collision.collider.tag == "Enemy") // touched an enemy!
+        //    {
+        //        playerStats.TakeDamage(10);
+        //    }
+        //}
         //// may not be needed for single ray shot here...
         //public void SphereCastRay(Vector3 direction)
         //{

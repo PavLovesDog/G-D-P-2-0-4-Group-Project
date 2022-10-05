@@ -8,6 +8,8 @@ TagManager:
   - CameraPivot
   - Tree
   - Stone
+  - EnemyWaypoint
+  - Enemy
   layers:
   - Default
   - TransparentFX

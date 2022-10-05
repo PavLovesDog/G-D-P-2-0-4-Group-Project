@@ -25,7 +25,6 @@ namespace MBF
         public Transform cameraDirection;
         public Transform cameraPivot;
         public GameObject rock;
-        public GameObject rockParent;
 
         private void Start()
         {

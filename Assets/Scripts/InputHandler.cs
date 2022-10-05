@@ -1,12 +1,14 @@
+/* 
+ * The structure of the AnimationHandler, PlayerMovement & InputHandler scripts were derived 
+ * from a Youtube tutorial series called "creat DARK SOULS in Unity" by Sebastian Graves. 
+ * Inspiriation for how things are handled and they way these scripts talk to each other lend
+ * to this design but have been modified heavily  by myself, Charles Bird, to suit the needs of this 
+ * project and functionality.
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-/*
- * Movement code derived from Sebastian graves Youtube series: Dark Souls in Unity.
- * This series taught me about the input system and how to utilise it 
-*/
-
 
 namespace MBF
 {
@@ -27,6 +29,7 @@ namespace MBF
         //action bool flags
         public bool sprintFlag;
         public bool sneakFlag;
+        bool canSneakSwitch = true;
         public bool jumpFlag;
 
         //state bools
@@ -42,6 +45,7 @@ namespace MBF
         private void Start()
         {
             cameraHandler = FindObjectOfType<CameraHandler>(); // acquire camera
+            canSneakSwitch = true;
         }
 
         private void FixedUpdate()
@@ -124,13 +128,11 @@ namespace MBF
             // map button with input handler
             left_thumb_click_input = playerControls.PlayerActions.Sneak.phase == UnityEngine.InputSystem.InputActionPhase.Started;
 
-            if(left_thumb_click_input) // listen for click
+
+            if(left_thumb_click_input && canSneakSwitch) // listen for click
             {
-                sneakFlag = true;
-            }
-            else
-            {
-                sneakFlag = false;
+                canSneakSwitch = false;
+                StartCoroutine(sneakFlagSwitch());
             }
         }
 
@@ -143,6 +145,15 @@ namespace MBF
             {
                 jumpFlag = true;
             }
+
+        }
+
+        //Coroutine to handle switching of snealing state, one click at a time
+        IEnumerator sneakFlagSwitch()
+        {
+            sneakFlag = !sneakFlag;
+            yield return new WaitForSeconds(0.5f);
+            canSneakSwitch = true;
 
         }
     }
