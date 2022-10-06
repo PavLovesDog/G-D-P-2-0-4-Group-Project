@@ -12,6 +12,7 @@ namespace MBF
 
         NPCDynamicPatrol npcPatrol;
         NavMeshAgent navMeshAgent;
+        PlayerMovement playerMovement;
 
         [Header("Player Detection")]
         public float distanceToPlayer;
@@ -28,39 +29,43 @@ namespace MBF
             navMeshAgent = GetComponent<NavMeshAgent>();
             npcPatrol = GetComponent<NPCDynamicPatrol>();
             player = GameObject.FindGameObjectWithTag("Player");
+            playerMovement = player.GetComponent<PlayerMovement>();
             currentDetectionRadius = detectionRadius;
         }
 
         void Update()
         {
+            // do this while player is not dead
+            if (!playerMovement.isDead && !npcPatrol.npcIsDead)
+            {
+                if (navMeshAgent == null)
+                {
+                    Debug.LogError("Nav Mesh Agent Not attached to " + gameObject.name);
+                }
+                else
+                {
+                    Vector3 targetDestination = player.transform.position; // create the target destination based off destination transform
+                    distanceToPlayer = Vector3.Distance(this.transform.position, targetDestination); //find distance between object and target
+                                                                                                     // check distance to player and adjust bool
+                    if (distanceToPlayer < currentDetectionRadius)
+                    {
+                        foundPlayer = true;
+                    }
+                    else
+                    {
+                        foundPlayer = false;
+                    }
 
-            if (navMeshAgent == null)
-            {
-                Debug.LogError("Nav Mesh Agent Not attached to " + gameObject.name);
-            }
-            else
-            {
-                Vector3 targetDestination = player.transform.position; // create the target destination based off destination transform
-                distanceToPlayer = Vector3.Distance(this.transform.position, targetDestination); //find distance between object and target
-                // check distance to player and adjust bool
-                if (distanceToPlayer < currentDetectionRadius)
-                {
-                    foundPlayer = true;
-                }
-                else
-                {
-                    foundPlayer = false;
-                }
-                
-                if (!npcPatrol.isPersuing)
-                {
-                    //chase target
-                    SetDestination();
-                }
-                else
-                {
-                    //reset speed
-                    navMeshAgent.speed = patrolSpeed;
+                    if (!npcPatrol.isPersuing)
+                    {
+                        //chase target
+                        SetDestination();
+                    }
+                    else
+                    {
+                        //reset speed
+                        navMeshAgent.speed = patrolSpeed;
+                    }
                 }
             }
         }

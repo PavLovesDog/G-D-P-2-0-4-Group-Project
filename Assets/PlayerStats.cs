@@ -15,12 +15,16 @@ namespace MBF
 
         public HealthBar healthBar;
         public ColdMeter coldMeter;
+        public PlayerMovement playerMovement;
+        AnimatorHandler animatorHandler;
         // Reference to animator handler to play damage and death animations??
 
         private void Awake()
         {
             healthBar = FindObjectOfType<HealthBar>();
             coldMeter = FindObjectOfType<ColdMeter>();
+            playerMovement = GetComponent<PlayerMovement>();
+            animatorHandler = GetComponentInChildren<AnimatorHandler>();
         }
 
 
@@ -54,8 +58,10 @@ namespace MBF
             if(currentHealth <= 0) // Death condition
             {
                 currentHealth = 0;
-                //Play death animation ?
+                //Play death animation
+                animatorHandler.PlayTargetAnimation("Death");
                 //stop move functions
+                playerMovement.isDead = true;
             }
         }
 

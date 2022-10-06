@@ -6,7 +6,6 @@ namespace MBF
 {
     public class Waypoint : MonoBehaviour
     {
-        [SerializeField]
         public float debugDrawRadius = 1.0f;
 
         public virtual void OnDrawGizmos()

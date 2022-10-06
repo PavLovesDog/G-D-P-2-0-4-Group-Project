@@ -43,6 +43,7 @@ namespace MBF
         float jumpForce = 10;
         public float jumpTimer = 0;
         public bool canJump = true;
+        public bool isDead;
 
         //This list BETTER suited for NPC...
         //[Header("Raycast variables")]
@@ -78,6 +79,8 @@ namespace MBF
 
         void Start()
         {
+            isDead = false;
+
             //assignment
             rigidbody = GetComponent<Rigidbody>();
             inputHandler = GetComponent<InputHandler>();
@@ -98,12 +101,14 @@ namespace MBF
         {
             // track smoothing time between frames
             float delta = Time.deltaTime;
-
-            inputHandler.TickInput(delta); // run Tick handle for input listening
-            HandleMovement(delta);
-            HandleSneaking();
-            HandleFalling(delta);
-            HandleJumping(delta);
+            if (!isDead)
+            {
+                inputHandler.TickInput(delta); // run Tick handle for input listening
+                HandleMovement(delta);
+                HandleSneaking();
+                HandleFalling(delta);
+                HandleJumping(delta);
+            }
         }
 
         #region Movement
@@ -226,7 +231,6 @@ namespace MBF
                 if (hit.transform.gameObject != null)
                 {
                     currentHitObject = hit.transform.gameObject;
-                    Debug.Log(hit.transform.gameObject.name);
 
                     //change air time bools
                     inputHandler.isGrounded = true;

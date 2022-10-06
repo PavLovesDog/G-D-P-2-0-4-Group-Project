@@ -38,6 +38,7 @@ namespace MBF
         // Update is called once per frame
         void Update()
         {
+            //track camera x rotation and map it to throwing arc
             arc = -cameraPivot.localRotation.x * arcForce;
 
             HandleRockThrow(arc);
@@ -76,15 +77,18 @@ namespace MBF
         //upon the player (because thats the game object this script is attached to) triggering the 'other' colllider
         private void OnTriggerEnter(Collider other)
         {
-            if(currentAmmo < maxAmmo)
+            if (other.gameObject.tag == "Projectile")
             {
-                currentAmmo++;
-                Debug.Log("You picked up a " + other.gameObject.name);
-                Destroy(other.gameObject);
-            }
-            else
-            {
-                Debug.Log("No room for more " + other.gameObject.name + "s...");
+                if (currentAmmo < maxAmmo)
+                {
+                    currentAmmo++;
+                    Debug.Log("You picked up a " + other.gameObject.name);
+                    Destroy(other.gameObject);
+                }
+                else
+                {
+                    Debug.Log("No room for more " + other.gameObject.name + "s...");
+                }
             }
         }
     }

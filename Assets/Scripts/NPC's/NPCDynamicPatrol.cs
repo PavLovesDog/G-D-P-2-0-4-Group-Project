@@ -42,78 +42,26 @@ namespace MBF
         Vector3 targetPosition = new Vector3();
         #endregion
 
+        public bool npcIsDead;
+
         void Start()
         {
+            npcIsDead = false;
             navMeshAgent = GetComponent<NavMeshAgent>();
             npcMovement = GetComponent<NPC_Chase>();
 
             FindFirstWaypoint();
         }
 
-        // Update is called once per frame
+
         void Update()
         {
-            //// not necessarily needed in update..
-            //#region Track Nearby Waypoints
-            //nearbyWaypoints.Clear();
-            ////Raycast here and add waypoints to nearbyWaypoints
-            //RaycastHit[] hits = Physics.SphereCastAll(transform.position, searchRadius, transform.forward, 1, layerMask, QueryTriggerInteraction.UseGlobal);
-            //foreach (RaycastHit hit in hits)
-            //{
-            //    nearbyWaypoints.Add(hit.transform.gameObject); // add gameobject to list
-            //    currentHitDistance = hit.distance;
-            //}
-            //distanceToDestination = Vector3.Distance(transform.position, targetPosition); // constantly track distance too
-            //#endregion
-            TrackNearbyWaypoints();
-            Patrol();
+            if (!npcIsDead)
+            {
+                TrackNearbyWaypoints();
+                Patrol();
+            }
 
-            //// if NPC hasn't found player, get patrolling!
-            //if (!npcMovement.foundPlayer)
-            //{
-            //    navMeshAgent.speed = npcMovement.patrolSpeed;
-            //    isPersuing = false;
-            //    // check if we're close to destination
-            //    if (isTravelling && navMeshAgent.remainingDistance <= 1.0f)
-            //    {
-            //        isTravelling = false; //turn off bool
-            //        waypointsVisited++; //track amount of waypoints visited, is this needed???
-            //
-            //        if (patrolWaiting) // if gonna wait. wait
-            //        {
-            //            isWaiting = true;
-            //            waitTimer = 0.0f; // reset wait timer
-            //        }
-            //        else
-            //        {
-            //            SetDestination();
-            //        }
-            //    }
-            //
-            //    // if waiting at position
-            //    if (isWaiting)
-            //    {
-            //        //sit still!
-            //        navMeshAgent.isStopped = true;
-            //
-            //        if (setWaitTime)
-            //        {
-            //            setWaitTime = false; // negate bool for one time time setting
-            //            waitTime = Random.Range(2.0f, 7.0f); // choose random amount of time to wait
-            //        }
-            //        waitTimer += Time.deltaTime; // count up timer
-            //        if (waitTimer >= waitTime) // if its above the amount
-            //        {
-            //            isWaiting = false; // stop waitng
-            //            setWaitTime = true; // set bool for next time set
-            //            SetDestination(); // move!
-            //        }
-            //    }
-            //} // else movement handled by NPC_Chase
-            //else
-            //{
-            //    navMeshAgent.isStopped = false; // lets get movng if we're currently chillin'
-            //}
         }
 
         private void Patrol()
@@ -239,7 +187,7 @@ namespace MBF
                             }
 
                             float shortestDistToNPC = 1000;
-                            DynamicWaypoint startWaypoint = new DynamicWaypoint();
+                            DynamicWaypoint startWaypoint = gameObject.AddComponent<DynamicWaypoint>();
 
                             //run through nearby waypoints to find nearest
                             for (int i = 0; i < nearbyWaypoints.Count; i++)
