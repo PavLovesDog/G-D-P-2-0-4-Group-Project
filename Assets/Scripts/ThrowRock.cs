@@ -11,6 +11,7 @@ namespace MBF
         public float damage = 10f;
         //public float range = 50f;
         //public float impactForce = 30f;
+        public float cameraRotationX;
         public float throwForce;
         public float arc;
         public float arcForce;
@@ -39,7 +40,11 @@ namespace MBF
         void Update()
         {
             //track camera x rotation and map it to throwing arc
-            arc = -cameraPivot.localRotation.x * arcForce;
+            cameraRotationX = cameraPivot.localRotation.x * 100;
+            arc = -cameraPivot.localRotation.x * 100;
+            //arc = -cameraPivot.localRotation.x * arcForce;
+            //arc = cameraPivot.localEulerAngles.x / 100;
+            //arc = Mathf.Clamp(arc, -35, 35);
 
             HandleRockThrow(arc);
         }
@@ -47,7 +52,7 @@ namespace MBF
         public void HandleRockThrow(float arc)
         {
             // listen to input controls for button click
-            left_click_input = inputHandler.playerControls.PlayerActions.Throw.phase == UnityEngine.InputSystem.InputActionPhase.Started;
+            left_click_input = inputHandler.playerControls.PlayerActions.Throw.phase == UnityEngine.InputSystem.InputActionPhase.Performed;
 
             if (left_click_input && canThrow) // if button has been clicked
             {
@@ -68,7 +73,7 @@ namespace MBF
             projectile.transform.position = rockSpawnPoint.position + cameraPivot.forward;
             projectile.transform.rotation = cameraDirection.rotation;// cameraPivot.rotation; 
             Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            rb.velocity = cameraDirection.forward * throwForce + cameraPivot.up * arc;
+            rb.velocity = cameraDirection.forward * throwForce + cameraPivot.up * (arc/2);
 
             yield return new WaitForSeconds(reloadTime); // pause before it can happen agian
             canThrow = true;

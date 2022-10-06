@@ -44,6 +44,7 @@ namespace MBF
         public float jumpTimer = 0;
         public bool canJump = true;
         public bool isDead;
+        bool canJumpAnimation;
 
         //This list BETTER suited for NPC...
         //[Header("Raycast variables")]
@@ -80,6 +81,7 @@ namespace MBF
         void Start()
         {
             isDead = false;
+            canJumpAnimation = true;
 
             //assignment
             rigidbody = GetComponent<Rigidbody>();
@@ -270,7 +272,12 @@ namespace MBF
                  // set timer to handle jumps
                 // play animation
                 jumpTimer = 4f;
-                animatorHandler.PlayTargetAnimation("Jump");
+                if(canJumpAnimation)
+                {
+                    canJumpAnimation = false;
+                    StartCoroutine(PlayJumpAnimation(jumpTimer));
+                }
+                
             }
 
             //whilst the timer is running, compute the jump
@@ -296,6 +303,13 @@ namespace MBF
                 fallDetectionRayLength = distanceNeededForFall;// reset
                 jumpTimer = 0;
             }
+        }
+
+        IEnumerator PlayJumpAnimation(float jumpTime)
+        {
+            animatorHandler.PlayTargetAnimation("Jump");
+            yield return new WaitForSeconds(jumpTime);
+            canJumpAnimation = true;
         }
 
 

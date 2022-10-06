@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &4529314110496448146
 Transform:
@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0.3792044, z: -0, w: 0.92531294}
   m_LocalPosition: {x: 0.137, y: 0, z: 0.983}
   m_LocalScale: {x: 0.10073, y: 0.25, z: 0.45636442}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4529314111715194864}
   m_RootOrder: 1
@@ -51,6 +52,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -97,7 +99,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &4529314110883462202
 Transform:
@@ -109,6 +111,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.679}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.7572}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4529314111715194864}
   m_RootOrder: 0
@@ -132,6 +135,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -196,6 +200,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -43.41, y: 5.88, z: -124.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4529314110883462202}
   - {fileID: 4529314110496448146}
@@ -222,6 +227,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -332,6 +338,7 @@ MonoBehaviour:
   waitTime: 0
   waitTimer: 0
   waypointsVisited: 0
+  npcIsDead: 0
 --- !u!114 &4529314111715194765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,6 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8286236aeeaa2234da0aa601ec6f7552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   currentHealth: 0
   maxHealth: 40
   strength: 5
@@ -383,7 +391,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &4529314111862805095
 Transform:
@@ -395,6 +403,7 @@ Transform:
   m_LocalRotation: {x: -0, y: 0.39033744, z: -0, w: 0.9206719}
   m_LocalPosition: {x: -0.132, y: 0, z: 0.989}
   m_LocalScale: {x: 0.10073, y: 0.25, z: 0.45636442}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4529314111715194864}
   m_RootOrder: 2
@@ -418,6 +427,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1

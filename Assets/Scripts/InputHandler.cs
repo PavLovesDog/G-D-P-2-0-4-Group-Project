@@ -110,7 +110,7 @@ namespace MBF
         private void HandleSprintInput()
         {
             //map the pressing of the button directly to bool
-            b_input = playerControls.PlayerActions.Sprint.phase == UnityEngine.InputSystem.InputActionPhase.Started;
+            b_input = playerControls.PlayerActions.Sprint.phase == UnityEngine.InputSystem.InputActionPhase.Performed;
 
             // listen for button press & assign bool flag
             if(b_input)
@@ -126,7 +126,7 @@ namespace MBF
         private void HandleSneakInput()
         {
             // map button with input handler
-            left_thumb_click_input = playerControls.PlayerActions.Sneak.phase == UnityEngine.InputSystem.InputActionPhase.Started;
+            left_thumb_click_input = playerControls.PlayerActions.Sneak.phase == UnityEngine.InputSystem.InputActionPhase.Performed;
 
 
             if(left_thumb_click_input && canSneakSwitch) // listen for click
@@ -139,7 +139,7 @@ namespace MBF
         private void HandleJumpInput()
         {
             //map button
-            y_input = playerControls.PlayerActions.Jump.phase == UnityEngine.InputSystem.InputActionPhase.Started;
+            y_input = playerControls.PlayerActions.Jump.phase == UnityEngine.InputSystem.InputActionPhase.Performed;
             //set bool
             if(y_input)
             {

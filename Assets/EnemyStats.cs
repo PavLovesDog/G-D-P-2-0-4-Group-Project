@@ -43,7 +43,7 @@ namespace MBF
         private void OnCollisionEnter(Collision collision)
         {
             //if enemy collides with the player
-            if (collision.collider.tag == "Player" && canDoDamage) // touched an enemy!
+            if (collision.collider.tag == "Player" && canDoDamage && !nPC.npcIsDead) // touched an enemy!
             {
                 canDoDamage = false;
                 StartCoroutine(DealDamageToPlayer());
@@ -52,7 +52,7 @@ namespace MBF
             //if a thrown rock hits the Enemy
             if(collision.gameObject.tag == "Projectile")
             {
-                Debug.Log("HIT!");
+                Debug.Log("HIT " + gameObject.name + "!");
                 if(enemyType == EnemyType.Bear)
                 {
                     TakeDamage(throwRock.damage / 2);
@@ -74,6 +74,7 @@ namespace MBF
                 //Play death animation ?
                 //stop move functions
                 nPC.npcIsDead = true;
+                Debug.Log("You killed a " + gameObject.name + "!");
             }
         }
 
