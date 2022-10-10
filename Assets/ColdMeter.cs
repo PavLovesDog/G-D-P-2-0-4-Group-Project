@@ -19,11 +19,5 @@ namespace MBF
         {
             slider.value = currentCold;
         }
-
-        public void DepleteMeter(float currentCold)
-        {
-            slider.value -= currentCold;
-
-        }
     }
 }

@@ -63,12 +63,12 @@ namespace MBF
         //Peform pyhysics calcs in fixed pdate for smoother operations
         private void FixedUpdate()
         {
-            SphereCastAllRay();
+            DetectEnvironmentSphereRayCast();
         }
 
         // Function to detect environment and enable or disable high/low polygon models
         // dependent on player distance to objects
-        public void SphereCastAllRay()
+        public void DetectEnvironmentSphereRayCast()
         {
             // creat objects to hold references to mesh scripts
             Low_Poly_Model hitObjectLowPoly;

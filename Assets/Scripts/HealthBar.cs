@@ -9,13 +9,13 @@ namespace MBF
     {
         public Slider slider;
 
-        public void SetMaxHealth(int maxhealth)
+        public void SetMaxHealth(float maxhealth)
         {
             slider.maxValue = maxhealth;
             slider.value = maxhealth;
         }
 
-        public void SetCurrenthealth(int currentHealth)
+        public void SetCurrenthealth(float currentHealth)
         {
             slider.value = currentHealth;
         }

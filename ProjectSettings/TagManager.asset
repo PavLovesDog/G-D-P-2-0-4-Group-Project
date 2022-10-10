@@ -10,6 +10,8 @@ TagManager:
   - Stone
   - EnemyWaypoint
   - Enemy
+  - Projectile
+  - Warm Zone
   layers:
   - Default
   - TransparentFX

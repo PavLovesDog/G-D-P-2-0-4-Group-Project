@@ -32,7 +32,7 @@ namespace MBF
 
         [Header("Movement Stats")]
         [SerializeField]
-        float moveSpeed = 5;
+        public float moveSpeed = 5;
         [SerializeField]
         float rotationSpeed = 10;
         [SerializeField]
@@ -140,9 +140,15 @@ namespace MBF
             // check for sprinting
             if(inputHandler.sprintFlag && inputHandler.moveAmount > 0.5f && !inputHandler.sneakFlag)
             {
-                speed = sprintSpeed;
+                if(playerStats.isFreezing)
+                {
+                    speed = sprintSpeed / 2;
+                }
+                else
+                {
+                    speed = sprintSpeed;
+                }
                 moveDirection *= speed;
-                //inputHandler.moveAmount = 2f;
             }
             else // not sprinting
             {
