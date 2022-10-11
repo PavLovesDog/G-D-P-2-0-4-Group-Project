@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace MBF
 {
@@ -23,29 +24,28 @@ namespace MBF
 
         PlayerStats playerStats;
         ThrowRock throwRock;
-        NPCDynamicPatrol nPC;
+        EnemyManager enemyManager;
+        NavMeshAgent navMeshAgent;
+        
 
         void Start()
         {
             canDoDamage = true;
             playerStats = FindObjectOfType<PlayerStats>();
             throwRock = FindObjectOfType<ThrowRock>(); // get reference for damage
-            nPC = GetComponent<NPCDynamicPatrol>();
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            enemyManager = GetComponent<EnemyManager>();
             currentHealth = maxHealth;
-        }
-
-        void Update()
-        {
-
         }
 
         //Handle collisions
         private void OnCollisionEnter(Collision collision)
         {
             //if enemy collides with the player
-            if (collision.collider.tag == "Player" && canDoDamage && !nPC.npcIsDead) // touched an enemy!
+            if (collision.collider.tag == "Player" && canDoDamage && !enemyManager.isDead) // touched an enemy!
             {
                 canDoDamage = false;
+                navMeshAgent.isStopped = true; // stop them for a second
                 StartCoroutine(DealDamageToPlayer());
             }
 
@@ -73,15 +73,17 @@ namespace MBF
                 currentHealth = 0;
                 //Play death animation ?
                 //stop move functions
-                nPC.npcIsDead = true;
+                enemyManager.isDead = true;
                 Debug.Log("You killed a " + gameObject.name + "!");
             }
         }
 
         IEnumerator DealDamageToPlayer()
         {
+            
             playerStats.DoDamage(strength * damageMultiplier); // call to damage playeer
             yield return new WaitForSeconds(1);
+            navMeshAgent.isStopped = false;
             canDoDamage = true;
         }
     }

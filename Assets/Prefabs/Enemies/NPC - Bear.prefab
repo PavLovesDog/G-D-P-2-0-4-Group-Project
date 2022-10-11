@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8282377564029526317}
   - component: {fileID: 8282377564029526355}
   - component: {fileID: 8282377564029526305}
+  - component: {fileID: 1761645648}
   m_Layer: 0
   m_Name: NPC - Bear
   m_TagString: Enemy
@@ -160,7 +161,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 256
-  searchRadius: 15
+  waypointSearchRadius: 15
   currentHitDistance: 0
   allWaypoints: []
   nearbyWaypoints: []
@@ -173,6 +174,7 @@ MonoBehaviour:
   waitTimer: 0
   waypointsVisited: 0
   npcIsDead: 0
+  drawWaypointSearchRadius: 0
 --- !u!114 &8282377564029526355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,12 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4279363f4dc7e1749a8f45005b3cad02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  distanceToPlayer: 0
-  detectionRadius: 10
-  currentDetectionRadius: 0
   chaseSpeed: 6.5
-  foundPlayer: 0
   patrolSpeed: 2.5
 --- !u!114 &8282377564029526305
 MonoBehaviour:
@@ -209,6 +206,33 @@ MonoBehaviour:
   maxHealth: 100
   strength: 15
   damageMultiplier: 2
+--- !u!114 &1761645648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8282377564029526315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85932b7718b85df46ad289168ae4b882, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDead: 0
+  isPatrolling: 0
+  playerSneaking: 0
+  player: {fileID: 0}
+  distanceToPlayer: 0
+  sphereDetectionRadius: 15
+  currentSphereDetectionRadius: 0
+  foundPlayer: 0
+  currentHitObject: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1088
+  rayLineDetectionRadius: 4
+  rayDetectionDistance: 15
+  currentRayDetectionDistance: 0
 --- !u!1 &8282377564151383226
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace navemesh_Tests
+namespace MBF
 { 
     public class Companion_AI : MonoBehaviour
     {
-        [SerializeField]
+        [Header("Tracking Positions")]
         public GameObject player;
         public GameObject position1;
         public GameObject position2;
         public GameObject position3;
+        public GameObject sneakPosition;
+
+        InputHandler inputHandler;
 
         [SerializeField]
         List<Vector3> targetPositions = new List<Vector3>();
 
         NavMeshAgent navMeshAgent;
 
-        public float distanceToPlayer;
-        public float detectionRadius;
-        public bool foundPlayer;
+        //public float distanceToPlayer;
+        //public float detectionRadius;
+        //public bool foundPlayer;
 
         public int currentIndex;
         public int previousIndex;
@@ -35,7 +38,8 @@ namespace navemesh_Tests
         {
             navMeshAgent = GetComponent<NavMeshAgent>();
             player = GameObject.FindGameObjectWithTag("Player");
-            position position; // ?? how to use this agin?
+            inputHandler = FindObjectOfType<InputHandler>();
+            //position position; // ?? how to use this agin?
 
         }
 
@@ -46,6 +50,7 @@ namespace navemesh_Tests
             targetPositions.Add(position2.transform.position); // index 0 // RIGHT of player
             targetPositions.Add(position3.transform.position); // index 1 // BEHIND of player
             targetPositions.Add(position1.transform.position); // index 2 // LEFT of player
+            targetPositions.Add(sneakPosition.transform.position); // index 3
 
             if (navMeshAgent == null)
             {
@@ -53,7 +58,15 @@ namespace navemesh_Tests
             }
             else
             {
-                IdleIndexSelector(delta);
+                if(inputHandler.sneakFlag)
+                {
+                    //if we're sneaking have the companion stay in one location
+                    currentIndex = 3;
+                }
+                else
+                {
+                    IdleIndexSelector(delta);
+                }
 
                 SetDestination(targetPositions[currentIndex]);
 
@@ -118,6 +131,10 @@ namespace navemesh_Tests
 
                     positionTimer = 0; // reset timer completely to stay at new position longer
                     positionChangeTime = Random.Range(3, 6); // randomly choose time to stay in said position
+                }
+                else // index is probably in sneak psition i.e 3
+                {
+                    currentIndex = 0;
                 }
             }
             else

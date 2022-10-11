@@ -19,6 +19,7 @@ namespace MBF
         InputHandler inputHandler;
         PlayerStats playerStats;
         public NPC_Chase[] nPC_Chase;
+        EnemyManager[] enemyManager;
 
         Vector3 moveDirection;
 
@@ -91,6 +92,9 @@ namespace MBF
 
             //find all NPC_Chase scripts
             nPC_Chase = GameObject.FindObjectsOfType<NPC_Chase>();
+            
+            // find all enemy manager scripts
+            enemyManager = GameObject.FindObjectsOfType<EnemyManager>();
 
             cameraObject = Camera.main.transform;
             myTransform = transform; // transform of object this script is attached to
@@ -202,22 +206,34 @@ namespace MBF
             {
                 animatorHandler.animator.SetBool("isSneaking", true);
 
-                // reduce detection distance of enemies
-                foreach (NPC_Chase script in nPC_Chase)
+                //// reduce detection distance of enemies
+                //foreach (NPC_Chase script in nPC_Chase)
+                //{
+                //    // half detection radius of each enemy
+                //    script.currentDetectionRadius = script.detectionRadius / 3;
+                //    //NOTE above could be handled in NPC script. if the player isSNeaking, they switch to raycast detections?
+                //    //So they just see whats in front of them??
+                //}
+
+                // run through every instance of enemy and set enemy manager bool
+                foreach (EnemyManager script in enemyManager)
                 {
-                    // half detection radius of each enemy
-                    script.currentDetectionRadius = script.detectionRadius / 2;
-                    //NOTE above could be handled in NPC script. if the player isSNeaking, they switch to raycast detections?
-                    //So they just see whats in front of them??
+                    script.playerSneaking = true;
                 }
             }
             else // not snekaing
             {
                 animatorHandler.animator.SetBool("isSneaking", false);
-                foreach (NPC_Chase script in nPC_Chase)
+                //foreach (NPC_Chase script in nPC_Chase)
+                //{
+                //    // half detection radius of each enemy
+                //    script.currentDetectionRadius = script.detectionRadius;
+                //}
+
+                // run through every instance of enemy and set enemy manager bool
+                foreach (EnemyManager script in enemyManager)
                 {
-                    // half detection radius of each enemy
-                    script.currentDetectionRadius = script.detectionRadius;
+                    script.playerSneaking = false;
                 }
             }
         }

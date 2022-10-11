@@ -11,7 +11,8 @@
                     "id": "e4234b5f-de4b-4c82-b9d1-8abfc3bf6bd2",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Camera",
@@ -19,7 +20,8 @@
                     "id": "3949f7b1-5c49-4b92-94b9-527dd800e164",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -123,7 +125,8 @@
                     "id": "257d4e55-b813-44d9-96b9-0ab781c6c3be",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Sneak",
@@ -131,7 +134,8 @@
                     "id": "f6c34870-80d9-4898-bd25-3f5512113d0b",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Throw",
@@ -139,7 +143,8 @@
                     "id": "9c0fc28e-52b1-452f-8342-d290ecd0d07d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Jump",
@@ -147,7 +152,8 @@
                     "id": "bd2abbf6-58e4-43b6-9e9f-a2bf09f77790",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -165,7 +171,7 @@
                 {
                     "name": "",
                     "id": "483b30e2-6b07-4eec-afaa-0ccb15a2966f",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

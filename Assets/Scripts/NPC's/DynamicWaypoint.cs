@@ -10,6 +10,7 @@ namespace MBF
         float connectivityRadius = 30f;
     
         public List<DynamicWaypoint> connections;
+        public bool drawConnectivity;
     
         void Start()
         {
@@ -37,11 +38,14 @@ namespace MBF
         //Set up visible gizmos in inspector
         public override void OnDrawGizmos()
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, debugDrawRadius);
-    
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, connectivityRadius);
+            if (drawConnectivity)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireSphere(transform.position, debugDrawRadius);
+
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(transform.position, connectivityRadius);
+            }
         }
     
         //method to determine next waypoint to be selected

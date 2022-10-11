@@ -89,11 +89,13 @@ namespace MBF
             {
                 // find the objects high poly model and Activate!
                 hitObjectHighPoly = allEnvironmentObjects[i].GetComponentInChildren<High_Poly_Model>();
-                hitObjectHighPoly.Deactivate();
+                if (hitObjectHighPoly != null)
+                    hitObjectHighPoly.Deactivate();
 
                 // find the objects Low poly model and Deactivate!
                 hitObjectLowPoly = allEnvironmentObjects[i].GetComponentInChildren<Low_Poly_Model>();
-                hitObjectLowPoly.Activate();
+                if (hitObjectLowPoly != null)
+                    hitObjectLowPoly.Activate();
             }
 
             // WITHIN SEARCH RADIUS
@@ -104,36 +106,38 @@ namespace MBF
                 {
                     // find the objects high poly model and Activate!
                     hitObjectHighPoly = hitEnvironementObjects[i].GetComponentInChildren<High_Poly_Model>();
-                    hitObjectHighPoly.Activate();
+                    if(hitObjectHighPoly != null)
+                        hitObjectHighPoly.Activate();
 
                     // find the objects Low poly model and Deactivate!
                     hitObjectLowPoly = hitEnvironementObjects[i].GetComponentInChildren<Low_Poly_Model>();
-                    hitObjectLowPoly.Deactivate();
+                    if(hitObjectLowPoly != null)
+                        hitObjectLowPoly.Deactivate();
                 }
             }
         }
 
-        //USE THIS RAY CAST FOR ENEMIES!
-        // function to shoot a single ray and record its data
-        public void SphereCastRay()
-        {
-            RaycastHit hit;
-            if (Physics.SphereCast(origin, searchRadius, direction, out hit, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal))
-            {
-                if (hit.transform.gameObject != null)
-                {
-                    currentHitObject = hit.transform.gameObject;
-                    Debug.Log(hit.transform.gameObject.name);
-                    currentHitDistance = hit.distance;
-                }
-
-            }
-            else // no hit
-            {
-                currentHitDistance = maxDistance;
-                currentHitObject = null;
-            }
-        }
+        ////USE THIS RAY CAST FOR ENEMIES!
+        //// function to shoot a single ray and record its data
+        //public void SphereCastRay()
+        //{
+        //    RaycastHit hit;
+        //    if (Physics.SphereCast(origin, searchRadius, direction, out hit, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal))
+        //    {
+        //        if (hit.transform.gameObject != null)
+        //        {
+        //            currentHitObject = hit.transform.gameObject;
+        //            Debug.Log(hit.transform.gameObject.name);
+        //            currentHitDistance = hit.distance;
+        //        }
+        //
+        //    }
+        //    else // no hit
+        //    {
+        //        currentHitDistance = maxDistance;
+        //        currentHitObject = null;
+        //    }
+        //}
 
         //function to draw gizmos!
         private void OnDrawGizmosSelected()

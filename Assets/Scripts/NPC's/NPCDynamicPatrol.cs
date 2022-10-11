@@ -10,10 +10,11 @@ namespace MBF
         #region Patrol Variables
         public NavMeshAgent navMeshAgent;
         NPC_Chase npcMovement;
+        EnemyManager enemyManager;
 
         [Header("Setup Patrol Variables")]
         public LayerMask layerMask;
-        public float searchRadius;
+        public float waypointSearchRadius;
         public float currentHitDistance;
         [SerializeField]
         public List<GameObject> allWaypoints = new List<GameObject>();
@@ -43,12 +44,13 @@ namespace MBF
         #endregion
 
         public bool npcIsDead;
+        public bool drawWaypointSearchRadius;
 
         void Start()
         {
-            npcIsDead = false;
             navMeshAgent = GetComponent<NavMeshAgent>();
             npcMovement = GetComponent<NPC_Chase>();
+            enemyManager = GetComponent<EnemyManager>();
 
             FindFirstWaypoint();
         }
@@ -56,7 +58,8 @@ namespace MBF
 
         void Update()
         {
-            if (!npcIsDead)
+            // if this enemy is NOT dead, track and patrol
+            if (!enemyManager.isDead)
             {
                 TrackNearbyWaypoints();
                 Patrol();
@@ -67,7 +70,7 @@ namespace MBF
         private void Patrol()
         {
             // if NPC hasn't found player, get patrolling!
-            if (!npcMovement.foundPlayer)
+            if (!enemyManager.foundPlayer)
             {
                 navMeshAgent.speed = npcMovement.patrolSpeed;
                 isPersuing = false;
@@ -118,7 +121,7 @@ namespace MBF
         {
             nearbyWaypoints.Clear();
             //Raycast here and add waypoints to nearbyWaypoints
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, searchRadius, transform.forward, 1, layerMask, QueryTriggerInteraction.UseGlobal);
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, waypointSearchRadius, transform.forward, 1, layerMask, QueryTriggerInteraction.UseGlobal);
             foreach (RaycastHit hit in hits)
             {
                 nearbyWaypoints.Add(hit.transform.gameObject); // add gameobject to list
@@ -127,7 +130,7 @@ namespace MBF
             distanceToDestination = Vector3.Distance(transform.position, targetPosition); // constantly track distance too
         }
 
-        // Function which propells agent towards its assigne destination
+        // Function which propells agent towards its assigned destination
         private void SetDestination()
         {
             if (waypointsVisited > 0) // if its not the first waypoint its visited
@@ -142,15 +145,6 @@ namespace MBF
             navMeshAgent.SetDestination(targetPosition);
             isTravelling = true;
             navMeshAgent.isStopped = false;
-
-            //if(distanceToDestination > 1.5f)
-            //{
-            //}
-            //else
-            //{
-            //    isTravelling = false;
-            //    navMeshAgent.isStopped = true;
-            //}
         }
 
         // Function to be called upon start up to determine where the agent will travel
@@ -180,7 +174,7 @@ namespace MBF
                         while (currentWaypoint == null)
                         {
                             //Raycast here and add waypoints to nearbyWaypoints
-                            RaycastHit[] hits = Physics.SphereCastAll(transform.position, searchRadius, transform.forward, 1, layerMask, QueryTriggerInteraction.UseGlobal);
+                            RaycastHit[] hits = Physics.SphereCastAll(transform.position, waypointSearchRadius, transform.forward, 1, layerMask, QueryTriggerInteraction.UseGlobal);
                             foreach (RaycastHit hit in hits)
                             {
                                 nearbyWaypoints.Add(hit.transform.gameObject); // add gameobject to list
@@ -227,9 +221,11 @@ namespace MBF
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.red;
-            Debug.DrawLine(transform.position, transform.position + transform.forward * currentHitDistance);
-            Gizmos.DrawWireSphere(transform.position + transform.forward * currentHitDistance, searchRadius);
+            if (drawWaypointSearchRadius)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(transform.position + transform.forward * currentHitDistance, waypointSearchRadius);
+            }
         }
     }
 }
