@@ -20,6 +20,8 @@ namespace MBF
         List<Vector3> targetPositions = new List<Vector3>();
 
         NavMeshAgent navMeshAgent;
+        CapsuleCollider thisCollider;
+        CapsuleCollider playerCollider;
 
         //public float distanceToPlayer;
         //public float detectionRadius;
@@ -39,6 +41,8 @@ namespace MBF
             navMeshAgent = GetComponent<NavMeshAgent>();
             player = GameObject.FindGameObjectWithTag("Player");
             inputHandler = FindObjectOfType<InputHandler>();
+            thisCollider = GetComponent<CapsuleCollider>();
+            playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<CapsuleCollider>();
             //position position; // ?? how to use this agin?
 
         }
@@ -51,6 +55,8 @@ namespace MBF
             targetPositions.Add(position3.transform.position); // index 1 // BEHIND of player
             targetPositions.Add(position1.transform.position); // index 2 // LEFT of player
             targetPositions.Add(sneakPosition.transform.position); // index 3
+
+            Physics.IgnoreCollision(thisCollider, playerCollider); // always ignore collisions with player
 
             if (navMeshAgent == null)
             {
@@ -130,7 +136,7 @@ namespace MBF
                     }
 
                     positionTimer = 0; // reset timer completely to stay at new position longer
-                    positionChangeTime = Random.Range(3, 6); // randomly choose time to stay in said position
+                    positionChangeTime = Random.Range(3, 8); // randomly choose time to stay in said position
                 }
                 else // index is probably in sneak psition i.e 3
                 {

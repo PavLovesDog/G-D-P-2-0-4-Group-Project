@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4279363f4dc7e1749a8f45005b3cad02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chaseSpeed: 6.5
+  chaseSpeed: 7.5
   patrolSpeed: 3.5
 --- !u!114 &7607264818387638631
 MonoBehaviour:
@@ -371,7 +371,8 @@ MonoBehaviour:
   currentHealth: 0
   maxHealth: 40
   strength: 5
-  damageMultiplier: 2
+  damageMultiplier: 4
+  hasHit: 0
 --- !u!114 &236273196
 MonoBehaviour:
   m_ObjectHideFlags: 0

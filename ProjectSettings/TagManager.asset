@@ -12,6 +12,7 @@ TagManager:
   - Enemy
   - Projectile
   - Warm Zone
+  - Companion
   layers:
   - Default
   - TransparentFX
