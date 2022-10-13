@@ -52,7 +52,8 @@ namespace MBF
             npcMovement = GetComponent<NPC_Chase>();
             enemyManager = GetComponent<EnemyManager>();
 
-            FindFirstWaypoint();
+            if (enemyManager.isPatrolling)
+                FindFirstWaypoint();
         }
 
 
@@ -61,8 +62,11 @@ namespace MBF
             // if this enemy is NOT dead, track and patrol
             if (!enemyManager.isDead)
             {
-                TrackNearbyWaypoints();
-                Patrol();
+                if(enemyManager.isPatrolling)
+                {
+                    TrackNearbyWaypoints();
+                    Patrol();
+                }
             }
 
         }

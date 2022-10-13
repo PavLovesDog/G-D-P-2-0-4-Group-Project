@@ -29,7 +29,7 @@ namespace MBF
 
         private void Start()
         {
-            currentAmmo = maxAmmo; // start with full rocks?
+            //currentAmmo = maxAmmo; // start with full rocks?
             inputHandler = GetComponent<InputHandler>();
             cameraDirection = GameObject.FindGameObjectWithTag("MainCamera").transform;
             cameraPivot = GameObject.FindGameObjectWithTag("CameraPivot").transform;
@@ -63,6 +63,10 @@ namespace MBF
 
                     //spawn rock
                     StartCoroutine(SpawnRockProjectile(arc));
+                }  
+                else // no ammo
+                {
+                    canThrow = true;
                 }
             }
         }

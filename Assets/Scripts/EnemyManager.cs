@@ -34,7 +34,7 @@ namespace MBF
         {
             //start bools
             isDead = false;
-            isPatrolling = true;
+            //isPatrolling = true;
             playerSneaking = false;
 
             player = GameObject.FindGameObjectWithTag("Player");
@@ -84,26 +84,30 @@ namespace MBF
                 if (hit.transform.gameObject != null)
                 {
                     currentHitObject = hit.transform.gameObject; // see what its hit
-                    Debug.Log(hit.transform.gameObject.name);
+                    rayLineDetectionRadius = 2.5f;
+                    //Debug.Log(hit.transform.gameObject.name);
                     currentRayDetectionDistance = hit.distance;
 
                     if(hit.transform.gameObject.tag == "Player")
                     {
                         foundPlayer = true;
-                        
                     }
-                    else // hit something else
-                    {
-                        //set search radius small, so player can hide behind objects
-                        rayLineDetectionRadius = 1;
-                    }
+                    //else // hit something else
+                    //{
+                    //    //set search radius small, so player can hide behind objects
+                    //    rayLineDetectionRadius = 1;
+                    //}
 
+                }
+                else
+                {
+                    rayLineDetectionRadius = 4;
                 }
                 //NOTE FOUND PLAYER WILL NEVER REVERT TO FALSE ?
             }
             else // no hit
             {
-                rayLineDetectionRadius = 4; // reset detection bubble
+                //rayLineDetectionRadius = 4; // reset detection bubble
                 currentRayDetectionDistance = rayDetectionDistance;
             }
         }

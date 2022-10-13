@@ -87,7 +87,7 @@ public class SunManager : MonoBehaviour
         {
             if(nightTime)
             {
-                daySpeed = dayLength + 0.05f;
+                daySpeed = dayLength + 0.005f;
             }
             else
             {
@@ -106,13 +106,13 @@ public class SunManager : MonoBehaviour
         {
             //SUNSET
             sunLight.intensity -= Time.deltaTime; 
-            sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0, 1.5f);
+            sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
         }
         else
         {
             //SUNRISE
             sunLight.intensity += Time.deltaTime;
-            sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0, 1.5f);
+            sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
         }
 
     }

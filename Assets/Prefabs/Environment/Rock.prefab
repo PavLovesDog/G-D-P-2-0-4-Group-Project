@@ -143,6 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalLifeTime: 30
+  doesDelete: 1
 --- !u!1001 &2396007027939018179
 PrefabInstance:
   m_ObjectHideFlags: 0
