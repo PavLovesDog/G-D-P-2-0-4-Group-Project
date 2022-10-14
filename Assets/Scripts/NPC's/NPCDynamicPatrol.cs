@@ -43,7 +43,6 @@ namespace MBF
         Vector3 targetPosition = new Vector3();
         #endregion
 
-        public bool npcIsDead;
         public bool drawWaypointSearchRadius;
 
         void Start()

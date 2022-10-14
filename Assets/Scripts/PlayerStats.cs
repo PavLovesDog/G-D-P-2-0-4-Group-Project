@@ -19,6 +19,8 @@ namespace MBF
         public bool isWarming;
         public float warmthReplenishRate;
 
+        //public bool refillMeter;
+
         public HealthBar healthBar;
         public ColdMeter coldMeter;
         public PlayerMovement playerMovement;
@@ -47,7 +49,6 @@ namespace MBF
             coldMeter.SetMaxCold(maxColdAmount);
             coldMeter.SetCurrentCold(currentColdAmount);
             isWarming = false;
-
         }
 
         void Update()

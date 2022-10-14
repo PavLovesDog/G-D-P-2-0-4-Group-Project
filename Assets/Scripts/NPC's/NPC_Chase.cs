@@ -27,7 +27,7 @@ namespace MBF
             if (enemyManager.foundPlayer && !enemyManager.isDead && enemyManager.player != null)
             {
                 navMeshAgent.speed = chaseSpeed;
-                if(!enemyStats.hasHit)
+                if(!enemyStats.hasHit) // this is so enemy waits a litlle bit after each hit
                     navMeshAgent.SetDestination(enemyManager.player.transform.position);
             }
             else

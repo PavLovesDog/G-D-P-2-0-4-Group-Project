@@ -19,6 +19,8 @@ namespace MBF
         public float warmthRadius;
         public float distanceToPlayer;
 
+        public bool showWarmthRadius;
+
         private void Start()
         {
             // get reference to player in world
@@ -73,9 +75,11 @@ namespace MBF
         //function to draw gizmos!
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.red;
-            Debug.DrawLine(origin, origin + direction * currentHitDistance);
-            Gizmos.DrawWireSphere(origin + direction * currentHitDistance, warmthRadius);
+            if (showWarmthRadius)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(origin/* + direction * currentHitDistance*/, warmthRadius);
+            }
         }
     }
 }

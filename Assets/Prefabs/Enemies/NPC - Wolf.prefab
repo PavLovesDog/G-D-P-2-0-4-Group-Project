@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 4529314111715194867}
   - component: {fileID: 4529314111715194765}
   - component: {fileID: 7607264818387638631}
-  - component: {fileID: 236273196}
+  - component: {fileID: 2117154990}
   m_Layer: 0
   m_Name: NPC - Wolf
   m_TagString: Enemy
@@ -369,11 +369,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   currentHealth: 0
-  maxHealth: 40
+  maxHealth: 80
   strength: 5
   damageMultiplier: 4
   hasHit: 0
---- !u!114 &236273196
+--- !u!114 &2117154990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -386,19 +386,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
-  isPatrolling: 0
+  isPatrolling: 1
   playerSneaking: 0
   player: {fileID: 0}
   distanceToPlayer: 0
-  sphereDetectionRadius: 10
+  sphereDetectionRadius: 8
   currentSphereDetectionRadius: 0
   foundPlayer: 0
   currentHitObject: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 1088
-  rayLineDetectionRadius: 2
-  rayDetectionDistance: 10
+  rayLineDetectionRadius: 4
+  rayDetectionDistance: 12
   currentRayDetectionDistance: 0
 --- !u!1 &4529314111862805092
 GameObject:

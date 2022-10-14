@@ -85,8 +85,8 @@ namespace MBF
         {
             
             playerStats.DoDamage(strength * damageMultiplier); // call to damage playeer
-            yield return new WaitForSeconds(1);
-            //navMeshAgent.isStopped = false;
+            yield return new WaitForSeconds(0.5f); // pause for a moment
+            
             hasHit = false;
             canDoDamage = true;
         }

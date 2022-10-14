@@ -78,6 +78,7 @@ namespace MBF
         public GameObject currentHitObject;
         [SerializeField]
         LayerMask layerMask; // NOt needed now??
+        float inAirTimer = 0f;
 
         void Start()
         {
@@ -275,6 +276,10 @@ namespace MBF
             //handle fall velocity
             if(inputHandler.isInAir)
             {
+                //increment timer for fall animation, fall anim only plays after 0.25f seconds has passed. this is set in the animator
+                inAirTimer += Time.deltaTime;
+                animatorHandler.animator.SetFloat("inAirTimer", inAirTimer);
+
                 //calculate fall speed based on time in air and gravity
                 fallVelocity += delta * (gravityIntensity);
                 rigidbody.AddForce((rayDirection * fallVelocity * 1000) + moveDirection); // add falling speed to rigidbody
@@ -284,6 +289,7 @@ namespace MBF
             else
             {
                 fallVelocity = initialFallSpeed;
+                inAirTimer = 0f;
             }
         }
 
