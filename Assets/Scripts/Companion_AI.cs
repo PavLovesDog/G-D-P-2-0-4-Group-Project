@@ -22,6 +22,7 @@ namespace MBF
         NavMeshAgent navMeshAgent;
         CapsuleCollider thisCollider;
         CapsuleCollider playerCollider;
+        GameManager gameManager;
 
         //public float distanceToPlayer;
         //public float detectionRadius;
@@ -43,63 +44,48 @@ namespace MBF
             inputHandler = FindObjectOfType<InputHandler>();
             thisCollider = GetComponent<CapsuleCollider>();
             playerCollider = GameObject.FindGameObjectWithTag("Player").GetComponent<CapsuleCollider>();
+            gameManager = FindObjectOfType<GameManager>();
             //position position; // ?? how to use this agin?
 
         }
 
         void Update()
         {
-            float delta = Time.deltaTime; // track time
-            targetPositions.Clear();
+            if (!gameManager.gamePaused)
+            {
+                float delta = Time.deltaTime; // track time
+
+                TrackPlayerPositions();
+
+                if (navMeshAgent == null)
+                {
+                    Debug.LogError("Nav Mesh Agent Not attached to " + gameObject.name);
+                }
+                else
+                {
+                    if (inputHandler.sneakFlag)
+                    {
+                        //if we're sneaking have the companion stay in one location
+                        currentIndex = 3;
+                    }
+                    else
+                    {
+                        IdleIndexSelector(delta);
+                    }
+
+                    SetDestination(targetPositions[currentIndex]);
+                }
+            }
+        }
+
+        public void TrackPlayerPositions()
+        {
+            targetPositions.Clear(); // clear the list for constant updates
             targetPositions.Add(position2.transform.position); // index 0 // RIGHT of player
             targetPositions.Add(position3.transform.position); // index 1 // BEHIND of player
             targetPositions.Add(position1.transform.position); // index 2 // LEFT of player
             targetPositions.Add(sneakPosition.transform.position); // index 3
-
             Physics.IgnoreCollision(thisCollider, playerCollider); // always ignore collisions with player
-
-            if (navMeshAgent == null)
-            {
-                Debug.LogError("Nav Mesh Agent Not attached to " + gameObject.name);
-            }
-            else
-            {
-                if(inputHandler.sneakFlag)
-                {
-                    //if we're sneaking have the companion stay in one location
-                    currentIndex = 3;
-                }
-                else
-                {
-                    IdleIndexSelector(delta);
-                }
-
-                SetDestination(targetPositions[currentIndex]);
-
-                //if(randIndex == 1 && !isBehind)
-                //{
-                //    if(previousIndex == 0)
-                //    {
-                //        randIndex++;
-                //    }
-                //    else if(previousIndex == 2)
-                //    {
-                //        randIndex--;
-                //    }
-                //    //isBehind = false;
-                //}
-                //distanceToPlayer = Vector3.Distance(this.transform.position, targetDestination); //find distance between object and target
-                //// check distance to player and adjust bool
-                //if (distanceToPlayer < detectionRadius)
-                //{
-                //    foundPlayer = true;
-                //}
-                //else
-                //{
-                //    foundPlayer = false;
-                //}
-
-            }
         }
 
         public void IdleIndexSelector(float delta)

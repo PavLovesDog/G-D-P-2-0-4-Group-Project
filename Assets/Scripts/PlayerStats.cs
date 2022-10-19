@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MBF
 {
@@ -10,6 +11,9 @@ namespace MBF
         public float currentHealth;
         public float maxHealth;
         bool deathCheck;
+        bool displayHealthBar;
+        float healthVisibilityCounter;
+        float healthBarAlpha;
 
         [Header("Environment Variables")]
         public float coldIntensity;
@@ -25,6 +29,8 @@ namespace MBF
         public ColdMeter coldMeter;
         public PlayerMovement playerMovement;
         AnimatorHandler animatorHandler;
+        EnemyStats enemyStats;
+        GameManager gameManager;
         // Reference to animator handler to play damage and death animations??
 
         private void Awake()
@@ -33,6 +39,7 @@ namespace MBF
             coldMeter = FindObjectOfType<ColdMeter>();
             playerMovement = GetComponent<PlayerMovement>();
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
+            gameManager = FindObjectOfType<GameManager>();
         }
 
 
@@ -53,25 +60,61 @@ namespace MBF
 
         void Update()
         {
-            HandleWarmingAndFreezingStates();
-
-            //visuall track changes
-            coldMeter.SetCurrentCold(currentColdAmount);
-            healthBar.SetCurrenthealth(currentHealth);
-
-            //death check
+            if (!gameManager.gamePaused)
             {
-                if (currentHealth <= 0) // Death condition
+                HandleWarmingAndFreezingStates();
+                HandleHealthBarVisuals();
+
+                //visually track changes
+                coldMeter.SetCurrentCold(currentColdAmount);
+                healthBar.SetCurrenthealth(currentHealth);
+
+                //death check
                 {
-                    currentHealth = 0;
-                    //Play death animation
-                    if(deathCheck)
+                    if (currentHealth <= 0) // Death condition
                     {
-                        deathCheck = false;
-                        animatorHandler.PlayTargetAnimation("Death");
+                        currentHealth = 0;
+                        //Play death animation
+                        if (deathCheck)
+                        {
+                            deathCheck = false;
+                            animatorHandler.PlayTargetAnimation("Death");
+                        }
+                        //stop move functions
+                        playerMovement.isDead = true;
                     }
-                    //stop move functions
-                    playerMovement.isDead = true;
+                }
+            }
+        }
+
+        private void HandleHealthBarVisuals()
+        {
+            //display health meter
+            if (displayHealthBar)
+            {
+                healthVisibilityCounter += Time.deltaTime; // 
+                healthBarAlpha = Mathf.InverseLerp(0, 1, healthVisibilityCounter);
+
+                Image[] sprites = gameManager.healthBar.GetComponentsInChildren<Image>();
+                foreach (Image sprite in sprites)
+                {
+                    sprite.enabled = true; // enable them
+                    sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, healthBarAlpha);
+                }
+
+                //start coroutine to flip bool
+                StartCoroutine(DisplayHealthBar());
+            }
+            else
+            {
+                healthVisibilityCounter -= Time.deltaTime / 3;
+                healthVisibilityCounter = Mathf.Clamp01(healthVisibilityCounter); // clamp it so it stays within 0 to 1 range
+                healthBarAlpha = Mathf.InverseLerp(0, 1, healthVisibilityCounter);
+
+                Image[] sprites = gameManager.healthBar.GetComponentsInChildren<Image>(); // get components of health bar.
+                foreach (Image sprite in sprites)
+                {
+                    sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, healthBarAlpha);
                 }
             }
         }
@@ -112,7 +155,10 @@ namespace MBF
 
         public void DoDamage(int damage)
         {
-            currentHealth -= damage; // minus damage
+            //show health bar for short period of time
+            displayHealthBar = true;
+
+            currentHealth -= damage * Time.deltaTime; // minus damage
             healthBar.SetCurrenthealth(currentHealth); // adjust slider
 
             if(currentHealth <= 0) // Death condition
@@ -125,14 +171,10 @@ namespace MBF
             }
         }
 
-        //WHICH SCRIPT SHOULD HANDLE COLLISION DAMAGE>>??
-        // Handle collision with enemies
-        //private void OnCollisionEnter(Collision collision)
-        //{
-        //    if (collision.collider.tag == "Enemy") // touched an enemy!
-        //    {
-        //        DoDamage(10);
-        //    }
-        //}
+        IEnumerator DisplayHealthBar()
+        {
+            yield return new WaitForSeconds(1);
+            displayHealthBar = false;
+        }
     }
 }

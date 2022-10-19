@@ -9,6 +9,7 @@ namespace MBF
     {
         NavMeshAgent navMeshAgent;
         EnemyManager enemyManager;
+        GameManager gameManager;
         EnemyStats enemyStats;
 
         [Header("Chase variables")]
@@ -20,20 +21,24 @@ namespace MBF
             navMeshAgent = GetComponent<NavMeshAgent>();
             enemyManager = GetComponent<EnemyManager>();
             enemyStats = GetComponent<EnemyStats>();
+            gameManager = FindObjectOfType<GameManager>();
         }
 
         void Update()
         {
-            if (enemyManager.foundPlayer && !enemyManager.isDead && enemyManager.player != null)
+            if (!gameManager.gamePaused)
             {
-                navMeshAgent.speed = chaseSpeed;
-                if(!enemyStats.hasHit) // this is so enemy waits a litlle bit after each hit
-                    navMeshAgent.SetDestination(enemyManager.player.transform.position);
-            }
-            else
-            {
-                //reset speed
-                navMeshAgent.speed = patrolSpeed;
+                if (enemyManager.foundPlayer && !enemyManager.isDead && enemyManager.player != null)
+                {
+                    navMeshAgent.speed = chaseSpeed;
+                    if (!enemyStats.hasHit) // this is so enemy waits a litlle bit after each hit
+                        navMeshAgent.SetDestination(enemyManager.player.transform.position);
+                }
+                else
+                {
+                    //reset speed
+                    navMeshAgent.speed = patrolSpeed;
+                }
             }
         }
     }

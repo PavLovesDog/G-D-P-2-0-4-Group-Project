@@ -38,6 +38,7 @@ namespace MBF
 
         public PlayerControls playerControls; // reference to input system
         CameraHandler cameraHandler;
+        GameManager gameManager;
 
         Vector2 movementInput;
         Vector2 cameraInput;
@@ -46,6 +47,7 @@ namespace MBF
         {
             cameraHandler = FindObjectOfType<CameraHandler>(); // acquire camera
             canSneakSwitch = true;
+            gameManager = FindObjectOfType<GameManager>();
         }
 
         private void FixedUpdate()
@@ -57,7 +59,8 @@ namespace MBF
             if (cameraHandler != null)
             {
                 cameraHandler.FollowTarget(delta);
-                cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
+                if(!gameManager.gamePaused) // NOTE this JUMPs to player original rotation... may need to have character starting in particular rotation
+                    cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
             }
         }
 
@@ -154,7 +157,6 @@ namespace MBF
             sneakFlag = !sneakFlag;
             yield return new WaitForSeconds(0.5f);
             canSneakSwitch = true;
-
         }
     }
 }

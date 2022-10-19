@@ -303,7 +303,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4529314111715194869}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 5
   m_Drag: 7.5
   m_AngularDrag: 1.77
   m_UseGravity: 1
@@ -339,7 +339,6 @@ MonoBehaviour:
   waitTime: 0
   waitTimer: 0
   waypointsVisited: 0
-  npcIsDead: 0
   drawWaypointSearchRadius: 0
 --- !u!114 &4529314111715194765
 MonoBehaviour:

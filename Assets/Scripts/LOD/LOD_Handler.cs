@@ -9,25 +9,28 @@ namespace MBF
         [Header("SphereCastAll variables")]
         public LayerMask layerMask; // used to ignore all colliders we wish not to collide with
         public float searchRadius;
-        public float currentHitDistance; // both variables used in single sphere cast
-        public float maxDistance;        // both variables used in single sphere cast
-        
-        [Header("SphereCast variables")]
-        public GameObject currentHitObject;
+        public float currentHitDistance;
+        public float maxDistance;
+
 
         private Vector3 origin;
         private Vector3 direction;
 
         [SerializeField]
-        List<GameObject> allEnvironmentObjects = new List<GameObject>();
+        List<GameObject> allEnvironmentObjects = new List<GameObject>(); // list to contain all elements of the chosen layermask
 
         [SerializeField]
-        List<GameObject> hitEnvironementObjects = new List<GameObject>();
+        List<GameObject> hitEnvironementObjects = new List<GameObject>(); // list to contain only elements sphere cast is colliding with
 
 
-        // Start is called before the first frame update
         void Start()
         {
+            /*
+             *  Find all tagged gameobjects that will be affected by the LOD handler (i.e models with high poly & low poly versions)
+             *  here and add them to the environment objects list. 
+             *  See examples for objects tagged "Tree" & "Stone" below.
+             */
+
             #region Find Trees
             //find all the trees in the scene
             GameObject[] allLODTrees = GameObject.FindGameObjectsWithTag("Tree");
@@ -50,13 +53,13 @@ namespace MBF
             }
             #endregion
 
-            //FIND OTHER ENVIRONMENT OBJECTS HERE.....
+            //FIND OTHER ENVIRONMENT OBJECTS.....
         }
 
         void Update()
         {
             //track position
-            origin = transform.position + new Vector3(0, 2, 0); // offset to shoot from belly
+            origin = transform.position + new Vector3(0, 2, 0); // offset to shoot from object midpoint
             direction = transform.forward;
         }
 
@@ -76,14 +79,15 @@ namespace MBF
 
             currentHitDistance = maxDistance;
             hitEnvironementObjects.Clear(); // clear list becfore cast
-            RaycastHit[] hits = Physics.SphereCastAll(origin, searchRadius, direction, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal);
+            RaycastHit[] hits = Physics.SphereCastAll(origin, searchRadius, direction, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal); // detect hits
 
             foreach (RaycastHit hit in hits)
             {
-                hitEnvironementObjects.Add(hit.transform.gameObject);
+                hitEnvironementObjects.Add(hit.transform.gameObject); // ad 'em to the list!
                 currentHitDistance = hit.distance; // NOTE this will make the draw gizmo only draw thwe wire sphere based on the distance of the last tree that ran..
             }
 
+            // OUTSIDE SEARCH RADIUS
             //adjust models for all Environment LOD objects
             for (int i = 0; i < allEnvironmentObjects.Count; i++)
             {
@@ -116,28 +120,6 @@ namespace MBF
                 }
             }
         }
-
-        ////USE THIS RAY CAST FOR ENEMIES!
-        //// function to shoot a single ray and record its data
-        //public void SphereCastRay()
-        //{
-        //    RaycastHit hit;
-        //    if (Physics.SphereCast(origin, searchRadius, direction, out hit, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal))
-        //    {
-        //        if (hit.transform.gameObject != null)
-        //        {
-        //            currentHitObject = hit.transform.gameObject;
-        //            Debug.Log(hit.transform.gameObject.name);
-        //            currentHitDistance = hit.distance;
-        //        }
-        //
-        //    }
-        //    else // no hit
-        //    {
-        //        currentHitDistance = maxDistance;
-        //        currentHitObject = null;
-        //    }
-        //}
 
         //function to draw gizmos!
         private void OnDrawGizmosSelected()

@@ -2,139 +2,217 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SunManager : MonoBehaviour
+namespace MBF
 {
-    Transform sunTransform;
-    Light sunLight;
-    [Header("Day Rotation & Speed Variables")]
-    public float sunXRotation;
-    public float rotationX;
-    public float dayLength = 0.01f;
-    float sunsetLength = 0.005f;
-    public float daySpeed;
-    public float daySpeedDivider;
-
-    [Header("Time bools")]
-    public bool dayTime;
-    bool canChangeToDayTime;
-    public bool nightTime;
-    bool canChangeToNighttime;
-
-    [Header("Light Variables")]
-    public float currentLightAmount;
-    public float sunriseSunsetSpeed;
-
-
-    // Start is called before the first frame update
-    void Start()
+    public class SunManager : MonoBehaviour
     {
-        sunTransform = transform;
-        //rotationX = sunTransform.rotation.x;
-        sunLight= GetComponent<Light>();
-        canChangeToNighttime = true; // set bools for day/night
-        dayTime = true;
-        canChangeToDayTime = false;
-        nightTime = false;
-    }
+        GameManager gameManager;
+        Transform sunTransform;
+        Light sunLight;
+        [Header("Day Rotation & Speed Variables")]
+        public float sunXRotation;
+        public float rotationX;
+        public float dayLength = 0.01f;
+        float sunsetLength = 0.005f;
+        public float daySpeed;
+        public float daySpeedDivider;
 
-    // Update is called once per frame
-    void Update()
-    {
-        float delta = Time.deltaTime;
-        sunXRotation = WrapAngle(transform.localEulerAngles.x);
-        currentLightAmount = sunLight.colorTemperature;
-        //track daytime/nightime
-        if(sunXRotation <= 0 && canChangeToNighttime && dayTime)
+        [Header("Time bools")]
+        public bool dayTime;
+        bool canChangeToDayTime;
+        public bool nightTime;
+        bool canChangeToNighttime;
+
+        [Header("Light Variables")]
+        public float currentLightAmount;
+        public float sunriseSunsetSpeed;
+
+
+        // Start is called before the first frame update
+        void Start()
         {
-            canChangeToNighttime = false;
-            dayTime = false;
-            nightTime = true;
-            canChangeToDayTime=true;
-            
-        }
-        else if(sunXRotation >= 1 && canChangeToDayTime && nightTime)
-        {
-            canChangeToDayTime=false;
-            nightTime = false;
+            gameManager = FindObjectOfType<GameManager>();
+
+            sunTransform = transform;
+            //rotationX = sunTransform.rotation.x;
+            sunLight = GetComponent<Light>();
+            canChangeToNighttime = true; // set bools for day/night
             dayTime = true;
-            canChangeToNighttime=true;
-            
+            canChangeToDayTime = false;
+            nightTime = false;
         }
 
-        ////rotationX = sunXRotation;
-        //rotationX = sunTransform.localRotation.x;
-        //rotationX += delta * daySpeed / daySpeedDivider;
-
-
-        ////calulate rotation of sun!
-        //if (dayTime)
-        //{
-        //    rotationX += delta * daySpeed / daySpeedDivider;
-        //}
-        //else // nighttime
-        //{
-        //    rotationX -= delta * daySpeed / daySpeedDivider;
-        //}
-        //sunTransform.rotation = new Quaternion(rotationX, sunTransform.rotation.y, sunTransform.rotation.z, sunTransform.rotation.w);
-
-        //NORTE ADJUST DAY SPEED for longer sunsets!
-        if(sunXRotation > 0 && sunXRotation < 10)
+        public void HandleDayStateBools()
         {
-            //set sunset speed
-            daySpeed = sunsetLength;
-        }
-        else
-        {
-            if(nightTime)
+            //track daytime/nightime
+            if (sunXRotation <= 0 && canChangeToNighttime && dayTime)
             {
-                daySpeed = dayLength + 0.005f;
+                canChangeToNighttime = false;
+                dayTime = false;
+                nightTime = true;
+                canChangeToDayTime = true;
+
+            }
+            else if (sunXRotation >= 1 && canChangeToDayTime && nightTime)
+            {
+                canChangeToDayTime = false;
+                nightTime = false;
+                dayTime = true;
+                canChangeToNighttime = true;
+            }
+        }
+
+        public void HandleDayNightCycle()
+        {
+            //NORTE ADJUST DAY SPEED for longer sunsets!
+            if (sunXRotation > 0 && sunXRotation < 10)
+            {
+                //set sunset speed
+                daySpeed = sunsetLength;
             }
             else
             {
-                daySpeed = dayLength;
+                if (nightTime)
+                {
+                    daySpeed = dayLength + 0.005f;
+                }
+                else
+                {
+                    daySpeed = dayLength;
+                }
+            }
+
+            //translate sun!
+            transform.Rotate(daySpeed, 0, 0);
+        }
+
+        public void HandleLightColour()
+        {
+            // change colour of light for sunset and sunrise
+            sunLight.colorTemperature = sunXRotation * sunriseSunsetSpeed * 10;
+
+            //adjust light intesity for nighttime
+            if (sunXRotation < -5f)
+            {
+                //SUNSET
+                sunLight.intensity -= Time.deltaTime;
+                sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
+            }
+            else
+            {
+                //SUNRISE
+                sunLight.intensity += Time.deltaTime;
+                sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
             }
         }
 
-        //translate sun!
-        transform.Rotate(daySpeed, 0, 0);
-        
-        // change colour of light for sunset and sunrise
-        sunLight.colorTemperature = sunXRotation * sunriseSunsetSpeed * 10;
-
-        //adjust light intesity for nighttime
-        if(sunXRotation < -5f)
+        // Update is called once per frame
+        void Update()
         {
-            //SUNSET
-            sunLight.intensity -= Time.deltaTime; 
-            sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
+            if(!gameManager.gamePaused)
+            {
+                float delta = Time.deltaTime;
+                sunXRotation = WrapAngle(transform.localEulerAngles.x);
+                currentLightAmount = sunLight.colorTemperature;
+
+                HandleDayStateBools();
+                HandleDayNightCycle();
+                HandleLightColour();
+            }
+
+            #region Old stuff
+            ////track daytime/nightime
+            //if (sunXRotation <= 0 && canChangeToNighttime && dayTime)
+            //{
+            //    canChangeToNighttime = false;
+            //    dayTime = false;
+            //    nightTime = true;
+            //    canChangeToDayTime = true;
+            //
+            //}
+            //else if (sunXRotation >= 1 && canChangeToDayTime && nightTime)
+            //{
+            //    canChangeToDayTime = false;
+            //    nightTime = false;
+            //    dayTime = true;
+            //    canChangeToNighttime = true;
+            //}
+
+            ////rotationX = sunXRotation;
+            //rotationX = sunTransform.localRotation.x;
+            //rotationX += delta * daySpeed / daySpeedDivider;
+
+
+            ////calulate rotation of sun!
+            //if (dayTime)
+            //{
+            //    rotationX += delta * daySpeed / daySpeedDivider;
+            //}
+            //else // nighttime
+            //{
+            //    rotationX -= delta * daySpeed / daySpeedDivider;
+            //}
+            //sunTransform.rotation = new Quaternion(rotationX, sunTransform.rotation.y, sunTransform.rotation.z, sunTransform.rotation.w);
+
+            ////NORTE ADJUST DAY SPEED for longer sunsets!
+            //if (sunXRotation > 0 && sunXRotation < 10)
+            //{
+            //    //set sunset speed
+            //    daySpeed = sunsetLength;
+            //}
+            //else
+            //{
+            //    if (nightTime)
+            //    {
+            //        daySpeed = dayLength + 0.005f;
+            //    }
+            //    else
+            //    {
+            //        daySpeed = dayLength;
+            //    }
+            //}
+            //
+            ////translate sun!
+            //transform.Rotate(daySpeed, 0, 0);
+
+            //// change colour of light for sunset and sunrise
+            //sunLight.colorTemperature = sunXRotation * sunriseSunsetSpeed * 10;
+            //
+            ////adjust light intesity for nighttime
+            //if (sunXRotation < -5f)
+            //{
+            //    //SUNSET
+            //    sunLight.intensity -= Time.deltaTime;
+            //    sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
+            //}
+            //else
+            //{
+            //    //SUNRISE
+            //    sunLight.intensity += Time.deltaTime;
+            //    sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
+            //}
+            #endregion
         }
-        else
+
+        //for values between 180-360
+        private static float WrapAngle(float angle)
         {
-            //SUNRISE
-            sunLight.intensity += Time.deltaTime;
-            sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
-        }
+            angle %= 360;
+            if (angle > 180)
+                return angle - 360;
 
-    }
-
-    //for values between 180-360
-    private static float WrapAngle(float angle)
-    {
-        angle %= 360;
-        if (angle > 180)
-            return angle - 360;
-
-        return angle;
-    }
-
-    //for values between 0-180
-    private static float UnWrapAngle(float angle)
-    {
-        if (angle >= 0)
             return angle;
+        }
 
-        angle = -angle % 360;
+        //for values between 0-180
+        private static float UnWrapAngle(float angle)
+        {
+            if (angle >= 0)
+                return angle;
 
-        return 360 - angle;
+            angle = -angle % 360;
+
+            return 360 - angle;
+        }
     }
 }

@@ -39,6 +39,15 @@ namespace MBF
             currentHealth = maxHealth;
         }
 
+        private void Update()
+        {
+            // track enemy health depletion, for smooth visual deletion of health
+            if(hasHit)
+            {
+                playerStats.DoDamage(strength * damageMultiplier);
+            }
+        }
+
         //Handle collisions
         private void OnCollisionEnter(Collision collision)
         {
@@ -48,7 +57,7 @@ namespace MBF
                 Debug.Log(gameObject.name + " hit " + collision.gameObject.name);
                 canDoDamage = false;
                 hasHit = true;
-                //navMeshAgent.isStopped = true; // stop them for a second THIS AINT WORKING
+
                 StartCoroutine(DealDamageToPlayer());
             }
 
@@ -83,10 +92,7 @@ namespace MBF
 
         IEnumerator DealDamageToPlayer()
         {
-            
-            playerStats.DoDamage(strength * damageMultiplier); // call to damage playeer
             yield return new WaitForSeconds(0.5f); // pause for a moment
-            
             hasHit = false;
             canDoDamage = true;
         }

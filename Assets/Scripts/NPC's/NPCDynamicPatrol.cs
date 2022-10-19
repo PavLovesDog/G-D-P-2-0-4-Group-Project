@@ -11,6 +11,7 @@ namespace MBF
         public NavMeshAgent navMeshAgent;
         NPC_Chase npcMovement;
         EnemyManager enemyManager;
+        GameManager gameManager;
 
         [Header("Setup Patrol Variables")]
         public LayerMask layerMask;
@@ -50,6 +51,7 @@ namespace MBF
             navMeshAgent = GetComponent<NavMeshAgent>();
             npcMovement = GetComponent<NPC_Chase>();
             enemyManager = GetComponent<EnemyManager>();
+            gameManager = FindObjectOfType<GameManager>();
 
             if (enemyManager.isPatrolling)
                 FindFirstWaypoint();
@@ -58,16 +60,18 @@ namespace MBF
 
         void Update()
         {
-            // if this enemy is NOT dead, track and patrol
-            if (!enemyManager.isDead)
+            if (!gameManager.gamePaused)
             {
-                if(enemyManager.isPatrolling)
+                // if this enemy is NOT dead, track and patrol
+                if (!enemyManager.isDead)
                 {
-                    TrackNearbyWaypoints();
-                    Patrol();
+                    if (enemyManager.isPatrolling)
+                    {
+                        TrackNearbyWaypoints();
+                        Patrol();
+                    }
                 }
             }
-
         }
 
         private void Patrol()

@@ -268,6 +268,45 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Menu"",
+            ""id"": ""38335476-246c-4797-b1c7-4eea2adc7a42"",
+            ""actions"": [
+                {
+                    ""name"": ""Pause Button"",
+                    ""type"": ""Button"",
+                    ""id"": ""074bc060-3e52-4fdf-a873-4e073f0119bc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d71faa94-5e2c-49f6-a830-28e12140d485"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8df0a108-0c1c-430f-8746-6d8e7d0d15f8"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -282,6 +321,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerActions_Sneak = m_PlayerActions.FindAction("Sneak", throwIfNotFound: true);
         m_PlayerActions_Throw = m_PlayerActions.FindAction("Throw", throwIfNotFound: true);
         m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
+        // Menu
+        m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
+        m_Menu_PauseButton = m_Menu.FindAction("Pause Button", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -435,6 +477,39 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         }
     }
     public PlayerActionsActions @PlayerActions => new PlayerActionsActions(this);
+
+    // Menu
+    private readonly InputActionMap m_Menu;
+    private IMenuActions m_MenuActionsCallbackInterface;
+    private readonly InputAction m_Menu_PauseButton;
+    public struct MenuActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MenuActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @PauseButton => m_Wrapper.m_Menu_PauseButton;
+        public InputActionMap Get() { return m_Wrapper.m_Menu; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MenuActions set) { return set.Get(); }
+        public void SetCallbacks(IMenuActions instance)
+        {
+            if (m_Wrapper.m_MenuActionsCallbackInterface != null)
+            {
+                @PauseButton.started -= m_Wrapper.m_MenuActionsCallbackInterface.OnPauseButton;
+                @PauseButton.performed -= m_Wrapper.m_MenuActionsCallbackInterface.OnPauseButton;
+                @PauseButton.canceled -= m_Wrapper.m_MenuActionsCallbackInterface.OnPauseButton;
+            }
+            m_Wrapper.m_MenuActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @PauseButton.started += instance.OnPauseButton;
+                @PauseButton.performed += instance.OnPauseButton;
+                @PauseButton.canceled += instance.OnPauseButton;
+            }
+        }
+    }
+    public MenuActions @Menu => new MenuActions(this);
     public interface IPlayerMovementActions
     {
         void OnMovement(InputAction.CallbackContext context);
@@ -446,5 +521,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnSneak(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface IMenuActions
+    {
+        void OnPauseButton(InputAction.CallbackContext context);
     }
 }

@@ -15,11 +15,13 @@ namespace MBF
         private Vector3 cameraFollowVelocity = Vector3.zero;
 
         public static CameraHandler singleton;
+        GameManager gameManager;
 
         public float lookSpeed = 0.1f;
         public float followSpeed = 0.1f;
         public float pivotSpeed = 0.03f;
         public float offsetXAmount = 0.35f;
+        public float offsetYAmount;
 
         private Vector3 cameraOffset;
 
@@ -40,12 +42,15 @@ namespace MBF
             singleton = this;
             myTransform = transform; // myTransfomr is equal to transform of this game object
             defaultPosition = cameraTransform.localPosition.z;
-            ignoreLayers = ~(1 << 8 | 1 << 9 | 1 << 10); // ignore layers 
-            //targetTransform = FindObjectOfType<PlayerMovement>().transform; // FIND PLAYER
+            ignoreLayers = ~(1 << 8 | 1 << 9 | 1 << 10); // ignore layers R
             targetTransform = GameObject.FindGameObjectWithTag("Player").transform;
             Application.targetFrameRate = 60; // set target framrate for forced smoothness
         }
 
+        private void Start()
+        {
+            gameManager = FindObjectOfType<GameManager>();
+        }
 
         //Follow target transform (i.e the player)
         public void FollowTarget(float delta)
@@ -59,7 +64,14 @@ namespace MBF
             //Add camera offset based on camera Actual position
             //TODO camera is always adding a positiv amouunt, so screen switches upon turning arounbd. this is cool BUT
             // could cast a ray or use sine to just check which direction facing, and add offset accordingly
-            cameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, 0.0f, 0.0f);
+            if(!gameManager.gamePaused)
+            {
+                cameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, 0.0f, 0.0f);
+            }
+            else
+            {
+                cameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, cameraTransform.localPosition.y + offsetYAmount, 0.0f);
+            }
 
             myTransform.position = targetPosition + cameraOffset;
 

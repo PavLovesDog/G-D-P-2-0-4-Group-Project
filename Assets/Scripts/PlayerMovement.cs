@@ -18,6 +18,7 @@ namespace MBF
         Transform cameraObject;
         InputHandler inputHandler;
         PlayerStats playerStats;
+        GameManager gameManager;
         public NPC_Chase[] nPC_Chase;
         EnemyManager[] enemyManager;
 
@@ -90,6 +91,7 @@ namespace MBF
             inputHandler = GetComponent<InputHandler>();
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
             playerStats = GetComponent<PlayerStats>();
+            gameManager = FindObjectOfType<GameManager>();
 
             //find all NPC_Chase scripts
             nPC_Chase = GameObject.FindObjectsOfType<NPC_Chase>();
@@ -106,15 +108,18 @@ namespace MBF
 
         public void Update()
         {
-            // track smoothing time between frames
-            float delta = Time.deltaTime;
-            if (!isDead)
+            if (!gameManager.gamePaused)
             {
-                inputHandler.TickInput(delta); // run Tick handle for input listening
-                HandleMovement(delta);
-                HandleSneaking();
-                HandleFalling(delta);
-                HandleJumping(delta);
+                // track smoothing time between frames
+                float delta = Time.deltaTime;
+                if (!isDead)
+                {
+                    inputHandler.TickInput(delta); // run Tick handle for input listening
+                    HandleMovement(delta);
+                    HandleSneaking();
+                    HandleFalling(delta);
+                    HandleJumping(delta);
+                }
             }
         }
 
