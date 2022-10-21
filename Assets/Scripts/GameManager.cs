@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 namespace MBF
@@ -13,25 +14,40 @@ namespace MBF
         public bool pauseMenuEnabled;
         Animator playerAnimator;
         InputHandler inputHandler;
+        EventSystem eventSystem;
 
         //need reference to all UI elements to be able to loop through image components to enable and disable sprites..
         public GameObject mainMenu;
         public GameObject pauseMenu;
+        public GameObject creditMenu;
         public GameObject healthBar;
         public GameObject warmthMeter;
         public GameObject reticle;
+
+        public GameObject startButton;
+        public GameObject resumeButton;
+        public GameObject returnButton;
+
+        public bool pauseCameraTransition;
+        //float cameraTransitionTimer;
 
         void Start()
         {
             canPauseGame = true;
             gamePaused = true;
             pauseMenuEnabled = false;
+            pauseCameraTransition = true;
             playerAnimator = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Animator>();
             inputHandler = GameObject.FindGameObjectWithTag("Player").GetComponent<InputHandler>();
+            eventSystem = GameObject.FindGameObjectWithTag("Event System").GetComponent<EventSystem>();
 
             //disable all menu options that are NOT the main menu
             DisableImageSprites(pauseMenu);
             DisableText(pauseMenu);
+
+            DisableImageSprites(creditMenu);
+            DisableText(creditMenu);
+
             DisableImageSprites(healthBar);
             DisableImageSprites(warmthMeter);
         }
@@ -54,19 +70,25 @@ namespace MBF
                 StartCoroutine(ResetPauseBool());
                 Debug.Log("Start button pressed");
 
-                if (pauseMenuEnabled)
+                //set the event system to now use the pause menu
+                eventSystem.SetSelectedGameObject(resumeButton);
+
+                if (pauseMenuEnabled) //if its paused already, Transition to Unpause
                 {
                     DisableImageSprites(pauseMenu);
                     DisableText(pauseMenu);
                     gamePaused = false;
                     pauseMenuEnabled = false;
+
+                    //StartCoroutine(TransitionCamera());
                 }
-                else
+                else // we are pausing the game!
                 {
                     EnableImageSprites(pauseMenu);
                     EnableText(pauseMenu);
                     gamePaused = true;
                     pauseMenuEnabled = true;
+                    //pauseCameraTransition = true; // change transition type of camera
                 }
             }
         }
@@ -131,6 +153,69 @@ namespace MBF
             //hide necessary menu images
             DisableImageSprites(mainMenu);
             DisableText(mainMenu);
+
+            //switch camera lerp style
+            StartCoroutine(TransitionCamera());
+        }
+
+        public void OnResumeButtonPress()
+        {
+            gamePaused = false;
+            pauseMenuEnabled = false;
+
+            //hide necessary menu images
+            DisableImageSprites(pauseMenu);
+            DisableText(pauseMenu);
+        }
+
+        public void OnReturnButtonPress()
+        {
+            // disable main menu
+            DisableImageSprites(creditMenu);
+            DisableText(creditMenu);
+
+            //set the event system to now use the credit menu
+            eventSystem.SetSelectedGameObject(startButton);
+
+            // enable credit menu
+            EnableImageSprites(mainMenu);
+            EnableText(mainMenu);
+        }
+
+        public void OnCreditsButtonPress()
+        {
+            Debug.Log("Clicked CREDITS!");
+
+            // disable main menu
+            DisableImageSprites(mainMenu);
+            DisableText(mainMenu);
+
+            //set the event system to now use the credit menu
+            eventSystem.SetSelectedGameObject(returnButton);
+
+            // enable credit menu
+            EnableImageSprites(creditMenu);
+            EnableText(creditMenu);
+        }
+
+        public void OnMainMenuButtonPress()
+        {
+            //reset scene? can do that>?
+            Debug.Log("pressed MAIN MENU !");
+        }
+
+        public void OnQuitButtonPress()
+        {
+            // quit game logic
+            Debug.Log("pressed QUIT !");
+        }
+
+
+        // IENumerators.....
+        IEnumerator TransitionCamera()
+        {
+            yield return new WaitForSeconds(1.25f);
+            pauseCameraTransition = false;
         }
 
         IEnumerator ResetPauseBool()

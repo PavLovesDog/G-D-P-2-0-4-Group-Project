@@ -13,6 +13,8 @@ TagManager:
   - Projectile
   - Warm Zone
   - Companion
+  - Interactable
+  - Event System
   layers:
   - Default
   - TransparentFX

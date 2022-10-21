@@ -59,7 +59,7 @@ namespace MBF
             if (cameraHandler != null)
             {
                 cameraHandler.FollowTarget(delta);
-                if(!gameManager.gamePaused) // NOTE this JUMPs to player original rotation... may need to have character starting in particular rotation
+                if(!gameManager.gamePaused)
                     cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
             }
         }

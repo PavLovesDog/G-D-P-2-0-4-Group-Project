@@ -20,10 +20,13 @@ namespace MBF
         public float lookSpeed = 0.1f;
         public float followSpeed = 0.1f;
         public float pivotSpeed = 0.03f;
+        public float cameraTransitionSpeed = 2;
+        float cameraRotationChangeSpeed = 2;
         public float offsetXAmount = 0.35f;
         public float offsetYAmount;
 
-        private Vector3 cameraOffset;
+        private Vector3 currentCameraOffset;
+        private Vector3 previousCameraOffset;
 
         private float targetPosition;
         private float defaultPosition;
@@ -36,6 +39,9 @@ namespace MBF
         public float cameraCollisionOffset = 0.2f;
         public float minimumCollisionOffset = 0.2f;
 
+        public Vector3 currentCamPostion = new Vector3();
+        public Vector3 previousCamPosition = new Vector3();
+        private float startTime;
 
         private void Awake()
         {
@@ -50,6 +56,7 @@ namespace MBF
         private void Start()
         {
             gameManager = FindObjectOfType<GameManager>();
+            startTime = Time.time;
         }
 
         //Follow target transform (i.e the player)
@@ -61,19 +68,28 @@ namespace MBF
                                                         ref cameraFollowVelocity, 
                                                         delta / followSpeed);
 
-            //Add camera offset based on camera Actual position
-            //TODO camera is always adding a positiv amouunt, so screen switches upon turning arounbd. this is cool BUT
-            // could cast a ray or use sine to just check which direction facing, and add offset accordingly
+            //Handle where the camera sits while game is paused or not, camera drops with player sitting while paused, raises when player resumes
             if(!gameManager.gamePaused)
             {
-                cameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, 0.0f, 0.0f);
+                currentCameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, 0.0f, 0.0f);
+                previousCameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, cameraTransform.localPosition.y + offsetYAmount, 0.0f);
+
+                currentCamPostion = targetPosition + currentCameraOffset;
+                previousCamPosition = targetPosition + previousCameraOffset;
             }
-            else
+            else // IS PAUSED
             {
-                cameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, cameraTransform.localPosition.y + offsetYAmount, 0.0f);
+                currentCameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, cameraTransform.localPosition.y + offsetYAmount, 0.0f);
+                previousCameraOffset = new Vector3(cameraTransform.localPosition.x + offsetXAmount, 0.0f, 0.0f);
+
+                currentCamPostion = targetPosition + currentCameraOffset;
+                previousCamPosition = targetPosition + previousCameraOffset;
             }
 
-            myTransform.position = targetPosition + cameraOffset;
+            float transition = (Time.time - startTime) / cameraTransitionSpeed;
+            myTransform.position = Vector3.Slerp(previousCamPosition, currentCamPostion, transition);
+
+            //myTransform.position = targetPosition + currentCameraOffset;
 
             HandleCameraCollisions(delta);
         }
@@ -87,7 +103,15 @@ namespace MBF
             Vector3 rotation = Vector3.zero;
             rotation.y = lookAngle;
             Quaternion targetRotation = Quaternion.Euler(rotation);
-            myTransform.rotation = targetRotation;
+
+            if(gameManager.pauseCameraTransition) // if we want the camera to slerp from pause position (Handled by pause)
+            {
+                myTransform.rotation = Quaternion.Slerp(myTransform.rotation, targetRotation, cameraRotationChangeSpeed * delta);
+            }
+            else // else in play mode
+            {
+                myTransform.rotation = targetRotation; 
+            }
 
             rotation = Vector3.zero;
             rotation.x = pivotAngle;
@@ -95,6 +119,8 @@ namespace MBF
             targetRotation = Quaternion.Euler(rotation);
 
             cameraPivotTransform.localRotation = targetRotation;
+            //myTransform.rotation = Quaternion.Slerp(myTransform.rotation, targetRotation, cameraStartSpeed * delta);
+
         }
 
         private void HandleCameraCollisions(float delta)
