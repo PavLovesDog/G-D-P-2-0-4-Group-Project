@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 namespace MBF
 {
@@ -12,21 +13,26 @@ namespace MBF
         public bool gamePaused;
         bool canPauseGame;
         public bool pauseMenuEnabled;
+        public bool gameComplete;
+        bool canCompleteGame;
         Animator playerAnimator;
         InputHandler inputHandler;
         EventSystem eventSystem;
+        EndZoneHandler endZoneHandler;
 
         //need reference to all UI elements to be able to loop through image components to enable and disable sprites..
         public GameObject mainMenu;
         public GameObject pauseMenu;
         public GameObject creditMenu;
+        public GameObject gameCompleteMenu;
         public GameObject healthBar;
         public GameObject warmthMeter;
         public GameObject reticle;
 
-        public GameObject startButton;
-        public GameObject resumeButton;
-        public GameObject returnButton;
+        public GameObject startButton; // Title screen button
+        public GameObject resumeButton; // pause screen button
+        public GameObject returnButton; // credits screen button
+        public GameObject mainMenuButton; // ending screen button
 
         public bool pauseCameraTransition;
         //float cameraTransitionTimer;
@@ -35,11 +41,14 @@ namespace MBF
         {
             canPauseGame = true;
             gamePaused = true;
+            gameComplete = false;
+            canCompleteGame = true;
             pauseMenuEnabled = false;
             pauseCameraTransition = true;
             playerAnimator = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Animator>();
             inputHandler = GameObject.FindGameObjectWithTag("Player").GetComponent<InputHandler>();
             eventSystem = GameObject.FindGameObjectWithTag("Event System").GetComponent<EventSystem>();
+            endZoneHandler = FindObjectOfType<EndZoneHandler>();
 
             //disable all menu options that are NOT the main menu
             DisableImageSprites(pauseMenu);
@@ -47,6 +56,9 @@ namespace MBF
 
             DisableImageSprites(creditMenu);
             DisableText(creditMenu);
+
+            DisableImageSprites(gameCompleteMenu);
+            DisableText(gameCompleteMenu);
 
             DisableImageSprites(healthBar);
             DisableImageSprites(warmthMeter);
@@ -56,9 +68,40 @@ namespace MBF
         void Update()
         {
             ListenForPauseButton();
+            ListenForSceneChanges();
+            HandleGameEnding();
 
             // update value within animator to controll sitting states
             playerAnimator.SetBool("gamePaused", gamePaused);
+        }
+
+        public void HandleGameEnding()
+        {
+            if(gameComplete && canCompleteGame)
+            {
+                //reset bool
+                canCompleteGame = false;
+
+                // - pause game
+                gamePaused = true; // stop all funmctions
+
+                // - display the finsih menu screen
+                EnableImageSprites(gameCompleteMenu);
+                EnableText(gameCompleteMenu);
+                eventSystem.SetSelectedGameObject(mainMenuButton); // select menu button
+
+                // - change scene?
+            }
+        }
+
+        public void ListenForSceneChanges()
+        {
+            // reset scene/ return to MainMenu
+            if(endZoneHandler.reloadScene)
+            {
+                endZoneHandler.reloadScene = false; // reset bool 
+                SceneManager.LoadScene("Test Level2"); // re-load level
+            }
         }
 
         public void ListenForPauseButton()
@@ -201,6 +244,9 @@ namespace MBF
         public void OnMainMenuButtonPress()
         {
             //reset scene? can do that>?
+            //SceneManager.LoadScene("Test Level2");
+            endZoneHandler.reloadScene = true;
+
             Debug.Log("pressed MAIN MENU !");
         }
 
