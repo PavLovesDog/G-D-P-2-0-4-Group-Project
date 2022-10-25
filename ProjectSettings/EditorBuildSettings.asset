@@ -4,6 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Mans Best Friend.unity
+    guid: 72c11ae0bf2b34242a198301cdb83d4f
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 739094c4e91d8324a97459c32428f78e, type: 2}

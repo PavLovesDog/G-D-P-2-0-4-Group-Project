@@ -254,6 +254,7 @@ namespace MBF
         {
             // quit game logic
             Debug.Log("pressed QUIT !");
+            Application.Quit();
         }
 
 

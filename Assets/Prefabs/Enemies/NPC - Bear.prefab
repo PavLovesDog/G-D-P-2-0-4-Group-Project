@@ -173,7 +173,6 @@ MonoBehaviour:
   waitTime: 0
   waitTimer: 0
   waypointsVisited: 0
-  npcIsDead: 0
   drawWaypointSearchRadius: 0
 --- !u!114 &8282377564029526355
 MonoBehaviour:
@@ -205,7 +204,8 @@ MonoBehaviour:
   currentHealth: 0
   maxHealth: 100
   strength: 15
-  damageMultiplier: 2
+  damageMultiplier: 3
+  hasHit: 0
 --- !u!114 &1761645648
 MonoBehaviour:
   m_ObjectHideFlags: 0

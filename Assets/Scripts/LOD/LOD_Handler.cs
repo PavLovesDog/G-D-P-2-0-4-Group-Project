@@ -7,7 +7,8 @@ namespace MBF
     public class LOD_Handler : MonoBehaviour
     {
         [Header("SphereCastAll variables")]
-        public LayerMask layerMask; // used to ignore all colliders we wish not to collide with
+        public LayerMask EnvironmentLayerMask; // used to ignore all colliders we wish not to collide with
+        public LayerMask ProjectileLayerMask;
         public float searchRadius;
         public float currentHitDistance;
         public float maxDistance;
@@ -18,9 +19,13 @@ namespace MBF
 
         [SerializeField]
         List<GameObject> allEnvironmentObjects = new List<GameObject>(); // list to contain all elements of the chosen layermask
-
         [SerializeField]
         List<GameObject> hitEnvironementObjects = new List<GameObject>(); // list to contain only elements sphere cast is colliding with
+
+        [SerializeField]
+        List<GameObject> allProjectileObjects = new List<GameObject>();
+        [SerializeField]
+        List<GameObject> hitProjectileObjects = new List<GameObject>();
 
 
         void Start()
@@ -53,6 +58,22 @@ namespace MBF
             }
             #endregion
 
+            #region Find Bonfires
+            GameObject[] allLODBonfires = GameObject.FindGameObjectsWithTag("Warm Zone"); // NOTE "Warm zone" may trigger other things if more work is doen here!
+            foreach ( GameObject bonfire in allLODBonfires)
+            {
+                allEnvironmentObjects.Add(bonfire);
+            }
+            #endregion
+
+            //#region Find Projectiles
+            //GameObject[] allProjectiles = GameObject.FindGameObjectsWithTag("Projectile"); // NOTE "Warm zone" may trigger other things if more work is doen here!
+            //foreach (GameObject rocks in allProjectiles)
+            //{
+            //    allProjectileObjects.Add(rocks);
+            //}
+            //#endregion
+
             //FIND OTHER ENVIRONMENT OBJECTS.....
         }
 
@@ -61,17 +82,26 @@ namespace MBF
             //track position
             origin = transform.position + new Vector3(0, 2, 0); // offset to shoot from object midpoint
             direction = transform.forward;
+
+            allProjectileObjects.Clear();
+            GameObject[] allProjectiles = GameObject.FindGameObjectsWithTag("Projectile"); // NOTE "Warm zone" may trigger other things if more work is doen here!
+            foreach (GameObject rocks in allProjectiles)
+            {
+                if(rocks != null)
+                    allProjectileObjects.Add(rocks);
+            }
         }
 
         //Peform pyhysics calcs in fixed pdate for smoother operations
         private void FixedUpdate()
         {
-            DetectEnvironmentSphereRayCast();
+            DetectLODGameObjectsSphereRayCast();
+            DetectProjectilesSphereRayCast();
         }
 
         // Function to detect environment and enable or disable high/low polygon models
         // dependent on player distance to objects
-        public void DetectEnvironmentSphereRayCast()
+        public void DetectLODGameObjectsSphereRayCast()
         {
             // creat objects to hold references to mesh scripts
             Low_Poly_Model hitObjectLowPoly;
@@ -79,7 +109,7 @@ namespace MBF
 
             currentHitDistance = maxDistance;
             hitEnvironementObjects.Clear(); // clear list becfore cast
-            RaycastHit[] hits = Physics.SphereCastAll(origin, searchRadius, direction, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal); // detect hits
+            RaycastHit[] hits = Physics.SphereCastAll(origin, searchRadius, direction, maxDistance, EnvironmentLayerMask, QueryTriggerInteraction.UseGlobal); // detect hits
 
             foreach (RaycastHit hit in hits)
             {
@@ -87,6 +117,7 @@ namespace MBF
                 currentHitDistance = hit.distance; // NOTE this will make the draw gizmo only draw thwe wire sphere based on the distance of the last tree that ran..
             }
 
+            #region Environment Objects
             // OUTSIDE SEARCH RADIUS
             //adjust models for all Environment LOD objects
             for (int i = 0; i < allEnvironmentObjects.Count; i++)
@@ -118,6 +149,41 @@ namespace MBF
                     if(hitObjectLowPoly != null)
                         hitObjectLowPoly.Deactivate();
                 }
+            }
+            #endregion
+        }
+
+        public void DetectProjectilesSphereRayCast()
+        {
+            InteractableObject hitInteractableObject = null;
+
+            hitProjectileObjects.Clear();
+            RaycastHit[] hits = Physics.SphereCastAll(origin, searchRadius / 1.5f, direction, maxDistance, ProjectileLayerMask, QueryTriggerInteraction.UseGlobal); // detect hits
+
+            foreach (RaycastHit hit in hits)
+            {
+                if(hit.transform.gameObject != null)
+                    hitProjectileObjects.Add(hit.transform.gameObject);
+            }
+
+            // ALL projectiles OUTSIDE of search radius
+            for (int i = 0; i < allProjectileObjects.Count; i++)
+            {
+                // find the objects script
+                if(allProjectileObjects[i].gameObject != null)
+                    hitInteractableObject = allProjectileObjects[i].GetComponent<InteractableObject>();
+                if (hitInteractableObject != null)
+                    hitInteractableObject.Deactivate();
+            }
+
+            // ALL projectiles INSIDE of search radius
+            for (int i = 0; i < hitProjectileObjects.Count; i++)
+            {
+                // find the objects script
+                if (hitProjectileObjects[i].gameObject != null)
+                    hitInteractableObject = hitProjectileObjects[i].GetComponent<InteractableObject>();
+                if (hitInteractableObject != null)
+                    hitInteractableObject.Activate();
             }
         }
 
