@@ -22,13 +22,15 @@ namespace MBF
 
         [Header("Raycast Variables")]
         public GameObject currentHitObject;
+        public float hitSphereSize = 2.5f;
+        public float nonHitSphereSize = 4;
         Vector3 origin;
         Vector3 direction;
         public LayerMask layerMask; // set in inspector for "Controller" i.e the player
         public float rayLineDetectionRadius;
         public float rayDetectionDistance;
         public float currentRayDetectionDistance;
-
+        public bool drawGizmos;
 
         private void Start()
         {
@@ -84,7 +86,7 @@ namespace MBF
                 if (hit.transform.gameObject != null)
                 {
                     currentHitObject = hit.transform.gameObject; // see what its hit
-                    rayLineDetectionRadius = 2.5f;
+                    rayLineDetectionRadius = hitSphereSize;
                     //Debug.Log(hit.transform.gameObject.name);
                     currentRayDetectionDistance = hit.distance;
 
@@ -92,22 +94,11 @@ namespace MBF
                     {
                         foundPlayer = true;
                     }
-                    //else // hit something else
-                    //{
-                    //    //set search radius small, so player can hide behind objects
-                    //    rayLineDetectionRadius = 1;
-                    //}
-
                 }
-                else
-                {
-                    rayLineDetectionRadius = 4;
-                }
-                //NOTE FOUND PLAYER WILL NEVER REVERT TO FALSE ?
             }
             else // no hit
             {
-                //rayLineDetectionRadius = 4; // reset detection bubble
+                rayLineDetectionRadius = nonHitSphereSize; // reset detection bubble
                 currentRayDetectionDistance = rayDetectionDistance;
             }
         }
@@ -115,19 +106,22 @@ namespace MBF
         //draw relevent gizmos
         private void OnDrawGizmos()
         {
-            if(playerSneaking)
+            if (drawGizmos)
             {
-                // draw ray line
-                Gizmos.color = Color.red;
-                Gizmos.DrawLine(origin, origin + direction * currentRayDetectionDistance);
-                Gizmos.DrawWireSphere(origin + direction * currentRayDetectionDistance, rayLineDetectionRadius);
-            }
-            else
-            {
-                // draw radius of 'Player NOT sneaking" search
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(transform.position, sphereDetectionRadius);
+                if (playerSneaking)
+                {
+                    // draw ray line
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(origin, origin + direction * currentRayDetectionDistance);
+                    Gizmos.DrawWireSphere(origin + direction * currentRayDetectionDistance, rayLineDetectionRadius);
+                }
+                else
+                {
+                    // draw radius of 'Player NOT sneaking" search
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireSphere(transform.position, sphereDetectionRadius);
 
+                }
             }
         }
     }

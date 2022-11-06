@@ -39,6 +39,7 @@ namespace MBF
         public PlayerControls playerControls; // reference to input system
         CameraHandler cameraHandler;
         GameManager gameManager;
+        
 
         Vector2 movementInput;
         Vector2 cameraInput;
@@ -48,6 +49,7 @@ namespace MBF
             cameraHandler = FindObjectOfType<CameraHandler>(); // acquire camera
             canSneakSwitch = true;
             gameManager = FindObjectOfType<GameManager>();
+            
         }
 
         private void FixedUpdate()

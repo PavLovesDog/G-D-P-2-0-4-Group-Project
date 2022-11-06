@@ -7,6 +7,7 @@ namespace MBF
     public class ThrowRock : MonoBehaviour
     {
         InputHandler inputHandler;
+        AudioManager audioManager;
 
         public float damage = 10f;
         //public float range = 50f;
@@ -31,6 +32,7 @@ namespace MBF
         {
             //currentAmmo = maxAmmo; // start with full rocks?
             inputHandler = GetComponent<InputHandler>();
+            audioManager = FindObjectOfType<AudioManager>();
             cameraDirection = GameObject.FindGameObjectWithTag("MainCamera").transform;
             cameraPivot = GameObject.FindGameObjectWithTag("CameraPivot").transform;
             canThrow = true;
@@ -56,6 +58,7 @@ namespace MBF
 
             if (left_click_input && canThrow) // if button has been clicked
             {
+
                 canThrow = false;
                 if (currentAmmo > 0)
                 {
@@ -73,6 +76,9 @@ namespace MBF
 
         IEnumerator SpawnRockProjectile(float arc)
         {
+            //play audio sound in this moment
+            audioManager.PlayAudio(audioManager.audioSource, audioManager.throwItem, 0.65f);
+
             GameObject projectile = Instantiate(rock) as GameObject;
             projectile.transform.position = rockSpawnPoint.position + cameraPivot.forward;
             projectile.transform.rotation = cameraDirection.rotation;// cameraPivot.rotation; 

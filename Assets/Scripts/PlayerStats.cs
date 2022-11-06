@@ -144,7 +144,8 @@ namespace MBF
                 //slow movement,
                 playerMovement.moveSpeed = 2.5f;
                 //deplete health!
-                currentHealth -= coldIntensity * Time.deltaTime;
+                //currentHealth -= coldIntensity * Time.deltaTime;
+                DoDamage((int)coldIntensity);
             }
             else
             {

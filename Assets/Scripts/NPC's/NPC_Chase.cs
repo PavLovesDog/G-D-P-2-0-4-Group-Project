@@ -11,6 +11,7 @@ namespace MBF
         EnemyManager enemyManager;
         GameManager gameManager;
         EnemyStats enemyStats;
+        PlayerMovement player;
 
         [Header("Chase variables")]
         public float chaseSpeed = 5;
@@ -22,13 +23,14 @@ namespace MBF
             enemyManager = GetComponent<EnemyManager>();
             enemyStats = GetComponent<EnemyStats>();
             gameManager = FindObjectOfType<GameManager>();
+            player = FindObjectOfType<PlayerMovement>();
         }
 
         void Update()
         {
             if (!gameManager.gamePaused)
             {
-                if (enemyManager.foundPlayer && !enemyManager.isDead && enemyManager.player != null)
+                if (enemyManager.foundPlayer && !player.isDead && !enemyManager.isDead && enemyManager.player != null)
                 {
                     navMeshAgent.speed = chaseSpeed;
                     if (!enemyStats.hasHit) // this is so enemy waits a litlle bit after each hit
@@ -37,7 +39,8 @@ namespace MBF
                 else
                 {
                     //reset speed
-                    navMeshAgent.speed = patrolSpeed;
+                    if(navMeshAgent != null)
+                        navMeshAgent.speed = patrolSpeed;
                 }
             }
         }

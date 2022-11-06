@@ -8,6 +8,8 @@ namespace MBF
     {
         GameManager gameManager;
         Transform sunTransform;
+        RenderSettings renderSettings;
+
         Light sunLight;
         [Header("Day Rotation & Speed Variables")]
         public float sunXRotation;
@@ -32,6 +34,7 @@ namespace MBF
         void Start()
         {
             gameManager = FindObjectOfType<GameManager>();
+            renderSettings = FindObjectOfType<RenderSettings>();
 
             sunTransform = transform;
             //rotationX = sunTransform.rotation.x;
@@ -89,14 +92,24 @@ namespace MBF
         public void HandleLightColour()
         {
             // change colour of light for sunset and sunrise
-            sunLight.colorTemperature = sunXRotation * sunriseSunsetSpeed * 10;
+            if(sunXRotation > 20f)
+            {
+                sunLight.colorTemperature = 8000;
+            }
+            else
+            {
+                sunLight.colorTemperature = sunXRotation * sunriseSunsetSpeed * 10;
+            }
 
             //adjust light intesity for nighttime
-            if (sunXRotation < -5f)
+            if (sunXRotation < 2.5f)
             {
                 //SUNSET
                 sunLight.intensity -= Time.deltaTime;
                 sunLight.intensity = Mathf.Clamp(sunLight.intensity, 0.01f, 1f);
+
+                //NOTE CHANGE SIHDLSDANFD
+                RenderSettings.skybox.SetFloat("_Exposure", Mathf.Lerp(.75f, 0.25f, Time.deltaTime * 2));
             }
             else
             {

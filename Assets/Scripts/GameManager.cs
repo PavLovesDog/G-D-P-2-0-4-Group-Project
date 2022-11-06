@@ -15,24 +15,48 @@ namespace MBF
         public bool pauseMenuEnabled;
         public bool gameComplete;
         bool canCompleteGame;
+        bool setDeathRetryButton;
+
         Animator playerAnimator;
+        PlayerMovement player;
         InputHandler inputHandler;
-        EventSystem eventSystem;
+        public EventSystem eventSystem;
         EndZoneHandler endZoneHandler;
+        ThrowRock throwRock;
+        AudioManager audioManager;
+        public bool increaseMusic;
+        public bool decreaseMusic;
+        public bool startMusic;
+        //public bool stopMusic;
+
 
         //need reference to all UI elements to be able to loop through image components to enable and disable sprites..
+        [Header("Menus")]
         public GameObject mainMenu;
         public GameObject pauseMenu;
+        public GameObject controlsMenu;
         public GameObject creditMenu;
         public GameObject gameCompleteMenu;
+        public GameObject deathMenu;
+
+        public GameObject journalMenu;
+        public GameObject journalResumeButton;
+        public Image journalImage;
+
+        [Header("UI")]
         public GameObject healthBar;
         public GameObject warmthMeter;
         public GameObject reticle;
+        public GameObject rockIcon;
+        public TMP_Text ammoText;
 
+        [Header("Buttons")]
         public GameObject startButton; // Title screen button
         public GameObject resumeButton; // pause screen button
         public GameObject returnButton; // credits screen button
+        public GameObject controlsReturnButton; // Controls return button
         public GameObject mainMenuButton; // ending screen button
+        public GameObject retryButton;
 
         public bool pauseCameraTransition;
         //float cameraTransitionTimer;
@@ -45,14 +69,25 @@ namespace MBF
             canCompleteGame = true;
             pauseMenuEnabled = false;
             pauseCameraTransition = true;
+            setDeathRetryButton = true;
+            increaseMusic = true;
+            decreaseMusic = false;
+            startMusic = true;
+            //stopMusic = false;
             playerAnimator = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Animator>();
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+            throwRock = GameObject.FindGameObjectWithTag("Player").GetComponent<ThrowRock>();
             inputHandler = GameObject.FindGameObjectWithTag("Player").GetComponent<InputHandler>();
             eventSystem = GameObject.FindGameObjectWithTag("Event System").GetComponent<EventSystem>();
+            audioManager = FindObjectOfType<AudioManager>();
             endZoneHandler = FindObjectOfType<EndZoneHandler>();
 
             //disable all menu options that are NOT the main menu
             DisableImageSprites(pauseMenu);
             DisableText(pauseMenu);
+
+            DisableImageSprites(controlsMenu);
+            DisableText(controlsMenu);
 
             DisableImageSprites(creditMenu);
             DisableText(creditMenu);
@@ -60,8 +95,16 @@ namespace MBF
             DisableImageSprites(gameCompleteMenu);
             DisableText(gameCompleteMenu);
 
+            DisableImageSprites(deathMenu);
+            DisableText(deathMenu);
+
+            DisableImageSprites(journalMenu);
+            DisableText(journalMenu);
+
             DisableImageSprites(healthBar);
             DisableImageSprites(warmthMeter);
+            DisableImageSprites(rockIcon);
+            DisableText(rockIcon);
         }
 
         // Update is called once per frame
@@ -71,8 +114,31 @@ namespace MBF
             ListenForSceneChanges();
             HandleGameEnding();
 
+            //track ammo amount and display
+            ammoText.text = throwRock.currentAmmo + "/" + throwRock.maxAmmo;
+
             // update value within animator to controll sitting states
             playerAnimator.SetBool("gamePaused", gamePaused);
+
+            if (gamePaused)
+            {
+                if(increaseMusic)
+                {
+                    audioManager.IncreaseAudioSourceVolume(audioManager.menuMusicSource, 0.5f);
+                    audioManager.DecreaseAudioSourceVolume(audioManager.overworldSource);
+                    decreaseMusic = true;
+                }
+            }
+            else
+            {
+                if(decreaseMusic)
+                {
+                    audioManager.DecreaseAudioSourceVolume(audioManager.menuMusicSource);
+                    audioManager.IncreaseAudioSourceVolume(audioManager.overworldSource, 0.4f);
+                    startMusic = true; // for next pause
+                    increaseMusic = true;
+                }
+            }
         }
 
         public void HandleGameEnding()
@@ -92,6 +158,16 @@ namespace MBF
 
                 // - change scene?
             }
+            else if(player.isDead)
+            {
+                EnableImageSprites(deathMenu);
+                EnableText(deathMenu);
+                if(setDeathRetryButton)
+                {
+                    setDeathRetryButton = false;
+                    eventSystem.SetSelectedGameObject(retryButton);
+                }
+            }
         }
 
         public void ListenForSceneChanges()
@@ -100,7 +176,7 @@ namespace MBF
             if(endZoneHandler.reloadScene)
             {
                 endZoneHandler.reloadScene = false; // reset bool 
-                SceneManager.LoadScene("Test Level2"); // re-load level
+                SceneManager.LoadScene("Mans Best Friend"); // re-load level
             }
         }
 
@@ -197,6 +273,10 @@ namespace MBF
             DisableImageSprites(mainMenu);
             DisableText(mainMenu);
 
+            //enable invetory view
+            EnableImageSprites(rockIcon);
+            EnableText(rockIcon);
+
             //switch camera lerp style
             StartCoroutine(TransitionCamera());
         }
@@ -211,11 +291,23 @@ namespace MBF
             DisableText(pauseMenu);
         }
 
+        public void OnJournalResumeButtonPress()
+        {
+            gamePaused = false;
+
+            //hide necessary menu images
+            DisableImageSprites(journalMenu);
+            DisableText(journalMenu);
+        }
+
         public void OnReturnButtonPress()
         {
-            // disable main menu
+            // disable Credits or Controls menu
             DisableImageSprites(creditMenu);
             DisableText(creditMenu);
+
+            DisableImageSprites(controlsMenu);
+            DisableText(controlsMenu);
 
             //set the event system to now use the credit menu
             eventSystem.SetSelectedGameObject(startButton);
@@ -241,10 +333,41 @@ namespace MBF
             EnableText(creditMenu);
         }
 
+        public void OnControlsButtonPress()
+        {
+            Debug.Log("Clicked CONTROLS!");
+
+            // disable main menu
+            DisableImageSprites(mainMenu);
+            DisableText(mainMenu);
+
+            //set the event system to now use the credit menu
+            eventSystem.SetSelectedGameObject(controlsReturnButton);
+
+            // enable controls menu
+            EnableImageSprites(controlsMenu);
+            EnableText(controlsMenu);
+        }
+
+        //public void OnReturnFromControlsPauseButtonPress()
+        //{
+        //    // disable main menu
+        //    DisableImageSprites(controlsMenu);
+        //    DisableText(controlsMenu);
+        //
+        //    //set the event system to now use the credit menu
+        //    eventSystem.SetSelectedGameObject(resumeButton);
+        //
+        //    // enable credit menu
+        //    EnableImageSprites(pauseMenu);
+        //    EnableText(pauseMenu);
+        //}
+
         public void OnMainMenuButtonPress()
         {
             //reset scene? can do that>?
             //SceneManager.LoadScene("Test Level2");
+            setDeathRetryButton = true;
             endZoneHandler.reloadScene = true;
 
             Debug.Log("pressed MAIN MENU !");

@@ -54,7 +54,10 @@ namespace MBF
             gameManager = FindObjectOfType<GameManager>();
 
             if (enemyManager.isPatrolling)
+            {
                 FindFirstWaypoint();
+                navMeshAgent.isStopped = false;
+            }
         }
 
 
@@ -65,12 +68,19 @@ namespace MBF
                 // if this enemy is NOT dead, track and patrol
                 if (!enemyManager.isDead)
                 {
+                    navMeshAgent.isStopped = false;
                     if (enemyManager.isPatrolling)
                     {
                         TrackNearbyWaypoints();
                         Patrol();
                     }
                 }
+
+            }
+            else
+            {
+                if(navMeshAgent != null)
+                    navMeshAgent.isStopped = true;
             }
         }
 
@@ -121,6 +131,7 @@ namespace MBF
             else
             {
                 navMeshAgent.isStopped = false; // lets get movng if we're currently chillin'
+                isPersuing = true;
             }
         }
 

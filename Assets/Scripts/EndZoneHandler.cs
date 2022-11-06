@@ -21,6 +21,8 @@ namespace MBF
         public bool loadNextScene;
         public bool reloadScene;
 
+        bool drawEndZoneGizmo;
+
         void Start()
         {
             gameManager = FindObjectOfType<GameManager>();
@@ -76,6 +78,15 @@ namespace MBF
             {
                 Debug.Log("In the end zone");
                 //playerAtEndZone = true;
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (drawEndZoneGizmo)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(transform.position, endZoneSize);
             }
         }
     }

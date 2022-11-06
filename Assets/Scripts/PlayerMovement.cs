@@ -21,6 +21,8 @@ namespace MBF
         GameManager gameManager;
         public NPC_Chase[] nPC_Chase;
         EnemyManager[] enemyManager;
+        AudioManager audioManager;
+        AudioSource playerAudioSource;
 
         Vector3 moveDirection;
 
@@ -28,7 +30,6 @@ namespace MBF
         public Transform myTransform; // transform of player
         [HideInInspector]
         public AnimatorHandler animatorHandler;
-
         public new Rigidbody rigidbody;
         public GameObject playerViewCamera;
 
@@ -43,26 +44,15 @@ namespace MBF
         float walkingSpeed = 2.5f;
         [SerializeField]
         float jumpForce = 10;
+
         public float jumpTimer = 0;
         public bool canJump = true;
         public bool isDead;
         bool canJumpAnimation;
+        bool canPlayJumpSound;
+        bool canPlayLandSound;
+        float landAudioTimer;
 
-        //This list BETTER suited for NPC...
-        //[Header("Raycast variables")]
-        //[SerializeField]
-        //float detectionRadius;
-        //[SerializeField]
-        //float detectionDistance;
-        //[SerializeField]
-        //Vector3 lookDirection = new Vector3();
-        //[SerializeField]
-        //public GameObject currentHitObject;
-        //[SerializeField]
-        //LayerMask layerMask;
-        //private float currentHitDistance;
-
-        //This list BETTER suited for NPC...
         [Header("Falling & Raycast variables")]
         [SerializeField]
         float initialFallSpeed;
@@ -80,11 +70,13 @@ namespace MBF
         [SerializeField]
         LayerMask layerMask; // NOt needed now??
         float inAirTimer = 0f;
+        float footstepTimer = 0;
 
         void Start()
         {
             isDead = false;
             canJumpAnimation = true;
+            canPlayJumpSound = true;
 
             //assignment
             rigidbody = GetComponent<Rigidbody>();
@@ -92,6 +84,8 @@ namespace MBF
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
             playerStats = GetComponent<PlayerStats>();
             gameManager = FindObjectOfType<GameManager>();
+            audioManager = FindObjectOfType<AudioManager>();
+            playerAudioSource = GetComponent<AudioSource>();
 
             //find all NPC_Chase scripts
             nPC_Chase = GameObject.FindObjectsOfType<NPC_Chase>();
@@ -119,6 +113,7 @@ namespace MBF
                     HandleSneaking();
                     HandleFalling(delta);
                     HandleJumping(delta);
+                    HandleCharacterAudio();
                 }
             }
         }
@@ -148,11 +143,11 @@ namespace MBF
             float speed = moveSpeed;
 
             // check for sprinting
-            if(inputHandler.sprintFlag && inputHandler.moveAmount > 0.5f && !inputHandler.sneakFlag)
+            if(inputHandler.sprintFlag && inputHandler.moveAmount > 0.5f)
             {
-                if(playerStats.isFreezing)
+                if (playerStats.isFreezing || inputHandler.sneakFlag)
                 {
-                    speed = sprintSpeed / 2;
+                    speed = sprintSpeed / 2; // half sprint speed when freezing or sneaking
                 }
                 else
                 {
@@ -164,6 +159,7 @@ namespace MBF
             {
                 if (inputHandler.moveAmount < 0.5) // check for walking
                 {
+                    
                     moveDirection *= walkingSpeed;
                 }
                 else if (inputHandler.sneakFlag && inputHandler.moveAmount > 0.1f)
@@ -178,6 +174,64 @@ namespace MBF
 
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
             rigidbody.velocity = projectedVelocity; // set movements to act upon rigid body
+        }
+
+        private void HandleCharacterAudio()
+        {
+            #region Footsteps
+            if (inputHandler.sneakFlag && inputHandler.sprintFlag && inputHandler.moveAmount > 0.1f && inputHandler.isGrounded) // FAST SNEAKING
+            {
+                HandleFootsteps(0.35f, 0.15f);
+            }
+            else if (inputHandler.sneakFlag && inputHandler.moveAmount > 0.1f && inputHandler.isGrounded) // SLOW SNEAKING
+            {
+                HandleFootsteps(0.45f, 0.15f);
+            }
+            else if (inputHandler.sprintFlag && inputHandler.moveAmount > 0.5f && inputHandler.isGrounded) // SPRINTING
+            {
+                HandleFootsteps(0.25f, 0.25f);
+            }
+            else if (inputHandler.moveAmount > 0.1f && inputHandler.moveAmount <= 1f && inputHandler.isGrounded) // WALKING
+            {
+                HandleFootsteps(0.38f, 0.25f);
+            }
+            #endregion
+
+            #region Jump and Land
+            if (inputHandler.jumpFlag && canPlayJumpSound)
+            {
+                canPlayJumpSound = false;
+                StartCoroutine(JumpSoundDelay());
+            }
+
+            //set bool and increment timer whilst in air
+            if(inputHandler.isInAir)
+            {
+                //set some bool true
+                canPlayLandSound = true;
+                landAudioTimer += Time.deltaTime;
+            }
+
+            //if has been in air long enough, play the landing sound on impact
+            if(canPlayLandSound && inputHandler.isGrounded && landAudioTimer > 1f) // moment when 
+            {
+                canPlayLandSound = false;
+                landAudioTimer = 0;
+                //play audio landing sound
+                audioManager.PlayAudio(playerAudioSource, audioManager.land, 0.3f);
+            }
+            #endregion
+        }
+
+        private void HandleFootsteps(float delay, float volume)
+        {
+            //play footstep audio
+            footstepTimer += Time.deltaTime;
+            if (footstepTimer > delay)
+            {
+                audioManager.PlayAudio(playerAudioSource, audioManager.footsteps, volume);
+                footstepTimer = 0;
+            }
         }
 
         //Handle the player models rotation
@@ -343,35 +397,14 @@ namespace MBF
             animatorHandler.PlayTargetAnimation("Jump");
             yield return new WaitForSeconds(jumpTime);
             canJumpAnimation = true;
+            canPlayJumpSound = true;
         }
 
-
-        //private void OnCollisionEnter(Collision collision)
-        //{
-        //    if (collision.collider.tag == "Enemy") // touched an enemy!
-        //    {
-        //        playerStats.TakeDamage(10);
-        //    }
-        //}
-        //// may not be needed for single ray shot here...
-        //public void SphereCastRay(Vector3 direction)
-        //{
-        //    RaycastHit hit;
-        //    if (Physics.SphereCast(transform.position, detectionRadius, lookDirection, out hit, detectionDistance, layerMask, QueryTriggerInteraction.UseGlobal))
-        //    {
-        //        if (hit.transform.gameObject != null)
-        //        {
-        //            currentHitObject = hit.transform.gameObject;
-        //            Debug.Log(hit.transform.gameObject.name);
-        //            currentHitDistance = hit.distance;
-        //        }
-        //
-        //    }
-        //    else // no hit
-        //    {
-        //        currentHitDistance = detectionDistance;
-        //        currentHitObject = null;
-        //    }
-        //}
+        IEnumerator JumpSoundDelay()
+        {
+            audioManager.PlayAudio(playerAudioSource, audioManager.jump, 0.25f);
+            yield return new WaitForSeconds(1f);
+            canPlayJumpSound = true;
+        }
     }
 }

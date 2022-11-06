@@ -7,8 +7,10 @@ namespace MBF
     public class ThermosPickUp : MonoBehaviour
     {
         PlayerStats playerStats;
+        GameManager gameManager;
         MeshRenderer mesh;
         CapsuleCollider capsuleCollider;
+        ParticleSystem particles;
         public float warmthRefillAmount;
 
         bool refillMeter;
@@ -18,12 +20,16 @@ namespace MBF
             playerStats = GameObject.FindObjectOfType<PlayerStats>();
             mesh = GetComponentInChildren<MeshRenderer>();
             capsuleCollider = GetComponent<CapsuleCollider>();
+            particles = GetComponentInChildren<ParticleSystem>();
+            gameManager = FindObjectOfType<GameManager>();
         }
 
         private void Update()
         {
+            HandleParticleEmission();
+
             // track ability to refil Warmth Meter
-            if(refillMeter)
+            if (refillMeter)
             {
                 StartCoroutine(RefillColdMeter());
             }
@@ -52,6 +58,26 @@ namespace MBF
 
             refillMeter = false; // reset bool
             Destroy(gameObject); // destroy object from scene
+        }
+
+        private void HandleParticleEmission()
+        {
+            //if the object is active within game, make partickles react to pasuing
+            if (capsuleCollider.enabled == true)
+            {
+                if (gameManager.gamePaused)
+                {
+                    if (particles.isPlaying)
+                        particles.Stop();
+                }
+                else
+                {
+                    if (particles.isStopped)
+                    {
+                        particles.Play();
+                    }
+                }
+            }
         }
     }
 }
