@@ -23,6 +23,7 @@ namespace MBF
         EnemyManager[] enemyManager;
         AudioManager audioManager;
         AudioSource playerAudioSource;
+        Torch torch;
 
         Vector3 moveDirection;
 
@@ -93,6 +94,8 @@ namespace MBF
             // find all enemy manager scripts
             enemyManager = GameObject.FindObjectsOfType<EnemyManager>();
 
+            torch = FindObjectOfType<Torch>();
+
             cameraObject = Camera.main.transform;
             myTransform = transform; // transform of object this script is attached to
             animatorHandler.Initialize();
@@ -114,6 +117,7 @@ namespace MBF
                     HandleFalling(delta);
                     HandleJumping(delta);
                     HandleCharacterAudio();
+                    HandleTorch();
                 }
             }
         }
@@ -389,6 +393,31 @@ namespace MBF
             {
                 fallDetectionRayLength = distanceNeededForFall;// reset
                 jumpTimer = 0;
+            }
+        }
+
+        private void HandleTorch()
+        {
+            //EQUIP
+            if(inputHandler.equipTorch && torch.isEquipped == false) // if not holding the torch
+            {
+                // equpid da torche
+                torch.Equip();
+            }
+            else if(inputHandler.equipTorch && torch.isEquipped == true) // if torch is already equipped
+            {
+                //unneqiup da tawrch
+                torch.Unequip();
+            }
+
+            //LIGHT
+            if(inputHandler.lightTorch && torch.isEquipped == true && torch.isLit == false)
+            {
+                torch.LightTorch();
+            }
+            else if(inputHandler.lightTorch && torch.isEquipped == true && torch.isLit == true)
+            {
+                torch.ExtinguishTorch();
             }
         }
 

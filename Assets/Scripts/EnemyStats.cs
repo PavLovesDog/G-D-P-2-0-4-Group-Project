@@ -86,7 +86,7 @@ namespace MBF
             Vector2 targetPos;
             targetPos = Camera.main.WorldToScreenPoint(transform.position);
 
-            if (isTakingDamage)
+            if (isTakingDamage && !enemyManager.isDead)
             {
                 GUI.Box(new Rect(targetPos.x - xPos, Screen.height - targetPos.y - yPos, width, height), currentHealth + "/" + maxHealth);
             }

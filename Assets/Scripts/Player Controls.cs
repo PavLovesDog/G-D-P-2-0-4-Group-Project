@@ -115,6 +115,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""fcc4b817-3d64-445f-991c-961762d7e399"",
+                    ""path"": ""<DualShockGamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""82339620-efcf-4ce2-be30-7eea39c0249a"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
@@ -130,6 +141,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": ""NormalizeVector2"",
+                    ""groups"": """",
+                    ""action"": ""Camera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8dd98b3-80b5-44ed-ad1b-6d79dc49a86f"",
+                    ""path"": ""<DualShockGamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Camera"",
                     ""isComposite"": false,
@@ -176,6 +198,24 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipTorch"",
+                    ""type"": ""Button"",
+                    ""id"": ""f1024e25-3bbe-4fd0-a3b0-2874dc28e9c7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LightTorch"",
+                    ""type"": ""Button"",
+                    ""id"": ""f03cd453-1b54-4e8b-8002-e531ff8087a0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -194,6 +234,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""483b30e2-6b07-4eec-afaa-0ccb15a2966f"",
                     ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""288d81e0-b74f-41ac-a76b-30dfccc702bb"",
+                    ""path"": ""<DualShockGamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dbfda033-fa99-4a74-bb3a-967bc84a17d4"",
+                    ""path"": ""<DualShockGamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -225,6 +287,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""c30ab3ea-cc16-4d91-b03e-abba8035d4de"",
+                    ""path"": ""<DualShockGamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sneak"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""325fe15e-2b36-4133-9db3-f22ad4391cba"",
+                    ""path"": ""<DualShockGamepad>/leftStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sneak"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""ef538248-650c-4b5f-ae9e-c8e4e3dde4dd"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
@@ -238,6 +322,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""eb474c23-51e8-4451-8427-5fca66c9d6f7"",
                     ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""588903c3-da8f-4dde-b5a0-e1afd15c793c"",
+                    ""path"": ""<DualShockGamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -264,6 +359,83 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b1fff354-29b2-4069-81df-b8bb85f1ea76"",
+                    ""path"": ""<DualShockGamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4bbb6d38-7f4d-4f45-a118-ca3ede0d99af"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipTorch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e0e7d72e-e38a-45d5-ad71-73bb9ddc5a21"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipTorch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2eace0e7-7689-444f-98b9-aaf3bee12bcd"",
+                    ""path"": ""<DualShockGamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipTorch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""16641917-310b-4554-ac87-56a095a3956e"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LightTorch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bbe28ba7-ef1d-4d13-9400-ea229e2a53e7"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LightTorch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1b7adc50-79cc-46ae-9cc4-bd430bf2e7ca"",
+                    ""path"": ""<DualShockGamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LightTorch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -305,6 +477,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Pause Button"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10e7d571-72ab-468a-b2cf-618763690787"",
+                    ""path"": ""<DualShockGamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -321,6 +504,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerActions_Sneak = m_PlayerActions.FindAction("Sneak", throwIfNotFound: true);
         m_PlayerActions_Throw = m_PlayerActions.FindAction("Throw", throwIfNotFound: true);
         m_PlayerActions_Jump = m_PlayerActions.FindAction("Jump", throwIfNotFound: true);
+        m_PlayerActions_EquipTorch = m_PlayerActions.FindAction("EquipTorch", throwIfNotFound: true);
+        m_PlayerActions_LightTorch = m_PlayerActions.FindAction("LightTorch", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_PauseButton = m_Menu.FindAction("Pause Button", throwIfNotFound: true);
@@ -428,6 +613,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Sneak;
     private readonly InputAction m_PlayerActions_Throw;
     private readonly InputAction m_PlayerActions_Jump;
+    private readonly InputAction m_PlayerActions_EquipTorch;
+    private readonly InputAction m_PlayerActions_LightTorch;
     public struct PlayerActionsActions
     {
         private @PlayerControls m_Wrapper;
@@ -436,6 +623,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Sneak => m_Wrapper.m_PlayerActions_Sneak;
         public InputAction @Throw => m_Wrapper.m_PlayerActions_Throw;
         public InputAction @Jump => m_Wrapper.m_PlayerActions_Jump;
+        public InputAction @EquipTorch => m_Wrapper.m_PlayerActions_EquipTorch;
+        public InputAction @LightTorch => m_Wrapper.m_PlayerActions_LightTorch;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -457,6 +646,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnJump;
+                @EquipTorch.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnEquipTorch;
+                @EquipTorch.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnEquipTorch;
+                @EquipTorch.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnEquipTorch;
+                @LightTorch.started -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnLightTorch;
+                @LightTorch.performed -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnLightTorch;
+                @LightTorch.canceled -= m_Wrapper.m_PlayerActionsActionsCallbackInterface.OnLightTorch;
             }
             m_Wrapper.m_PlayerActionsActionsCallbackInterface = instance;
             if (instance != null)
@@ -473,6 +668,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @EquipTorch.started += instance.OnEquipTorch;
+                @EquipTorch.performed += instance.OnEquipTorch;
+                @EquipTorch.canceled += instance.OnEquipTorch;
+                @LightTorch.started += instance.OnLightTorch;
+                @LightTorch.performed += instance.OnLightTorch;
+                @LightTorch.canceled += instance.OnLightTorch;
             }
         }
     }
@@ -521,6 +722,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnSneak(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnEquipTorch(InputAction.CallbackContext context);
+        void OnLightTorch(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {

@@ -25,12 +25,18 @@ namespace MBF
         public bool b_input; // Sprinting input
         public bool y_input; // jump button
         public bool left_thumb_click_input;
+        public bool Dpad_Right_input; // light torch
+        public bool Dpad_Up_Input; // equip torch
 
         //action bool flags
         public bool sprintFlag;
         public bool sneakFlag;
         bool canSneakSwitch = true;
         public bool jumpFlag;
+        public bool equipTorch;
+        bool canEquipTorch = true;
+        public bool lightTorch;
+        bool canLightTorch = true;
 
         //state bools
         public bool isGrounded = true;
@@ -40,7 +46,6 @@ namespace MBF
         CameraHandler cameraHandler;
         GameManager gameManager;
         
-
         Vector2 movementInput;
         Vector2 cameraInput;
 
@@ -48,8 +53,7 @@ namespace MBF
         {
             cameraHandler = FindObjectOfType<CameraHandler>(); // acquire camera
             canSneakSwitch = true;
-            gameManager = FindObjectOfType<GameManager>();
-            
+            gameManager = FindObjectOfType<GameManager>(); 
         }
 
         private void FixedUpdate()
@@ -72,6 +76,8 @@ namespace MBF
             left_thumb_click_input = false;
             sprintFlag = false;
             jumpFlag = false;
+            equipTorch = false;
+            lightTorch = false;
         }
 
         public void OnEnable()
@@ -101,6 +107,7 @@ namespace MBF
             HandleSprintInput();
             HandleSneakInput();
             HandleJumpInput();
+            HandleTorchInputs();
         }
 
         private void MoveInput()
@@ -150,7 +157,38 @@ namespace MBF
             {
                 jumpFlag = true;
             }
+        }
 
+        private void HandleTorchInputs()
+        {
+            Dpad_Up_Input = playerControls.PlayerActions.EquipTorch.phase == UnityEngine.InputSystem.InputActionPhase.Performed; // equip torch inptu
+            Dpad_Right_input = playerControls.PlayerActions.LightTorch.phase == UnityEngine.InputSystem.InputActionPhase.Performed; // light torch inpuit
+
+            if(Dpad_Up_Input && canEquipTorch)
+            {
+                canEquipTorch = false;
+                StartCoroutine(torchEquipTimer());
+            }
+
+            if(Dpad_Right_input && canLightTorch)
+            {
+                canLightTorch = false;
+                StartCoroutine(torchLightTimer());
+            }
+        }
+
+        IEnumerator torchEquipTimer()
+        {
+            equipTorch = !equipTorch;
+            yield return new WaitForSeconds(0.5f);
+            canEquipTorch = true;
+        }
+
+        IEnumerator torchLightTimer()
+        {
+            lightTorch = !lightTorch;
+            yield return new WaitForSeconds(0.5f);
+            canLightTorch = true;
         }
 
         //Coroutine to handle switching of snealing state, one click at a time
