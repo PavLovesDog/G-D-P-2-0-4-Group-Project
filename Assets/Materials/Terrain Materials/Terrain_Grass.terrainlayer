@@ -7,7 +7,7 @@ TerrainLayer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Terrain_Grass
-  m_DiffuseTexture: {fileID: 2800000, guid: db6d45799e287e14a9e0a41ab5b359f4, type: 3}
+  m_DiffuseTexture: {fileID: 2800000, guid: 204386cd77dee1345b94b9489ee2a976, type: 3}
   m_NormalMapTexture: {fileID: 2800000, guid: ad8b3b97f4502504881cd7c29c30bb0f, type: 3}
   m_MaskMapTexture: {fileID: 0}
   m_TileSize: {x: 2, y: 2}
